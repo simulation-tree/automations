@@ -92,7 +92,7 @@ namespace Automations
             StateMachine.ThrowIfStateIsMissing(stateName);
             int stateNameHash = stateName.GetHashCode();
             USpan<StateAutomationLink> links = entity.GetArray<StateAutomationLink>();
-            uint count = links.length;
+            uint count = links.Length;
             for (uint i = 0; i < count; i++)
             {
                 ref StateAutomationLink existingLink = ref links[i];

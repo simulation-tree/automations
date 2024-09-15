@@ -98,7 +98,7 @@ namespace Automations
         public readonly bool ContainsParameter(FixedString name)
         {
             USpan<Parameter> parameters = Parameters;
-            for (uint i = 0; i < parameters.length; i++)
+            for (uint i = 0; i < parameters.Length; i++)
             {
                 if (parameters[i].name == name)
                 {
@@ -112,7 +112,7 @@ namespace Automations
         public readonly ref float GetParameterRef(FixedString name)
         {
             USpan<Parameter> parameters = Parameters;
-            for (uint i = 0; i < parameters.length; i++)
+            for (uint i = 0; i < parameters.Length; i++)
             {
                 if (parameters[i].name == name)
                 {
@@ -132,7 +132,7 @@ namespace Automations
         public readonly void AddOrSetParameter(FixedString name, float value)
         {
             USpan<Parameter> parameters = Parameters;
-            uint count = parameters.length;
+            uint count = parameters.Length;
             for (uint i = 0; i < count; i++)
             {
                 if (parameters[i].name == name)

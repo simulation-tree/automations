@@ -124,7 +124,7 @@ namespace Automations.Systems
 
         private static bool TryGetAvailableStateIndex(int nameHash, USpan<AvailableState> availableStates, out uint index)
         {
-            for (uint i = 0; i < availableStates.length; i++)
+            for (uint i = 0; i < availableStates.Length; i++)
             {
                 if (availableStates[i].name.GetHashCode() == nameHash)
                 {

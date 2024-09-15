@@ -28,7 +28,7 @@ namespace Automations
                 ThrowIfStateIsMissing(value);
                 ref IsStateMachine stateMachine = ref entity.GetComponentRef<IsStateMachine>();
                 USpan<AvailableState> states = AvailableStates;
-                for (uint index = 0; index < states.length; index++)
+                for (uint index = 0; index < states.Length; index++)
                 {
                     if (states[index].name == value)
                     {
@@ -80,7 +80,7 @@ namespace Automations
         {
             ThrowIfTransitionAlreadyExists(sourceState, destinationState, parameter);
             USpan<Transition> transitions = Transitions;
-            uint transitionCount = transitions.length;
+            uint transitionCount = transitions.Length;
             transitions = entity.ResizeArray<Transition>(transitionCount + 1);
             transitions[transitionCount] = new(sourceState, destinationState, parameter, condition, value);
         }
@@ -91,7 +91,7 @@ namespace Automations
             int sourceStateHash = sourceState.GetHashCode();
             int destinationStateHash = destinationState.GetHashCode();
             int parameterHash = parameter.GetHashCode();
-            for (uint i = 0; i < transitions.length; i++)
+            for (uint i = 0; i < transitions.Length; i++)
             {
                 ref Transition transition = ref transitions[i];
                 if (transition.sourceStateHash == sourceStateHash && transition.destinationStateHash == destinationStateHash && transition.parameterHash == parameterHash)
@@ -109,7 +109,7 @@ namespace Automations
             int sourceStateHash = sourceState.GetHashCode();
             int destinationStateHash = destinationState.GetHashCode();
             int parameterHash = parameter.GetHashCode();
-            for (uint i = 0; i < transitions.length; i++)
+            for (uint i = 0; i < transitions.Length; i++)
             {
                 ref Transition transition = ref transitions[i];
                 if (transition.sourceStateHash == sourceStateHash && transition.destinationStateHash == destinationStateHash && transition.parameterHash == parameterHash)
@@ -124,7 +124,7 @@ namespace Automations
         public readonly void AddState(FixedString name)
         {
             ThrowIfAvailableStateAlreadyExists(name);
-            uint availableStateCount = AvailableStates.length;
+            uint availableStateCount = AvailableStates.Length;
             USpan<AvailableState> availableStates = entity.ResizeArray<AvailableState>(availableStateCount + 1);
             availableStates[availableStateCount] = new(name);
         }
@@ -132,7 +132,7 @@ namespace Automations
         public readonly bool ContainsState(FixedString name)
         {
             USpan<AvailableState> availableStates = AvailableStates;
-            for (uint i = 0; i < availableStates.length; i++)
+            for (uint i = 0; i < availableStates.Length; i++)
             {
                 if (availableStates[i].name == name)
                 {
@@ -146,7 +146,7 @@ namespace Automations
         public readonly ref AvailableState GetState(FixedString name)
         {
             USpan<AvailableState> availableStates = AvailableStates;
-            for (uint i = 0; i < availableStates.length; i++)
+            for (uint i = 0; i < availableStates.Length; i++)
             {
                 if (availableStates[i].name == name)
                 {
@@ -187,7 +187,7 @@ namespace Automations
         [Conditional("DEBUG")]
         public readonly void ThrowIfNoStatesAvailable()
         {
-            if (AvailableStates.length == 0)
+            if (AvailableStates.Length == 0)
             {
                 throw new InvalidOperationException($"No states available on state machine `{entity}`");
             }
