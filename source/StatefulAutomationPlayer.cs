@@ -92,6 +92,7 @@ namespace Automations
             StateMachine.ThrowIfStateIsMissing(stateName);
             int stateNameHash = stateName.GetHashCode();
             USpan<StateAutomationLink> links = entity.GetArray<StateAutomationLink>();
+            RuntimeType componentType = RuntimeType.Get<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
             {
@@ -100,7 +101,7 @@ namespace Automations
                 {
                     rint automationReference = existingLink.automationReference;
                     uint automationEntity = entity.GetReference(automationReference);
-                    existingLink.componentType = RuntimeType.Get<T>();
+                    existingLink.componentType = componentType;
                     if (automation.entity.value != automationEntity)
                     {
                         entity.SetReference(automationReference, automation);
@@ -113,7 +114,7 @@ namespace Automations
             links = entity.ResizeArray<StateAutomationLink>(count + 1);
             ref StateAutomationLink newLink = ref links[count];
             newLink.stateNameHash = stateNameHash;
-            newLink.componentType = RuntimeType.Get<T>();
+            newLink.componentType = componentType;
             newLink.automationReference = entity.AddReference(automation);
         }
     }

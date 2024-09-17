@@ -2,7 +2,6 @@
 using Automations.Events;
 using Simulation;
 using System;
-using System.ComponentModel.Design;
 using System.Numerics;
 using Unmanaged;
 
@@ -125,6 +124,12 @@ namespace Automations.Systems
                         byte* valueBytes = (byte*)&keyframeValue;
                         world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<float>.ElementSize));
                     }
+                    else if (keyframeValueType == RuntimeType.Get<Keyframe<FixedString>>())
+                    {
+                        FixedString keyframeValue = *(FixedString*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
+                        byte* valueBytes = (byte*)&keyframeValue;
+                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<FixedString>.ElementSize));
+                    }
                     else
                     {
                         throw new NotImplementedException($"Unable to evaluate with unknown keyframe value type {keyframeValueType} on entity {automationEntity}");
@@ -172,6 +177,22 @@ namespace Automations.Systems
                 float value = currentKeyframeValue + (nextKeyframeValue - currentKeyframeValue) * timeProgress;
                 byte* valueBytes = (byte*)&value;
                 world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<float>.ElementSize));
+            }
+            else if (keyframeValueType == RuntimeType.Get<byte>())
+            {
+                byte currentKeyframeValue = *(byte*)((byte*)currentKeyframe + sizeof(float) + sizeof(uint));
+                byte nextKeyframeValue = *(byte*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
+                byte value = (byte)(currentKeyframeValue + (nextKeyframeValue - currentKeyframeValue) * timeProgress);
+                byte* valueBytes = &value;
+                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<byte>.ElementSize));
+            }
+            else if (keyframeValueType == RuntimeType.Get<Keyframe<FixedString>>())
+            {
+                FixedString currentKeyframeValue = *(FixedString*)((byte*)currentKeyframe + sizeof(float) + sizeof(uint));
+                //FixedString nextKeyframeValue = *(FixedString*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
+                //FixedString value = FixedString.Lerp(currentKeyframeValue, nextKeyframeValue, timeProgress);
+                byte* valueBytes = (byte*)&currentKeyframeValue;
+                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<FixedString>.ElementSize));
             }
             else
             {
