@@ -1,28 +1,53 @@
 ﻿using Automations.Components;
-using Automations.Events;
 using Simulation;
+using Simulation.Functions;
 using System;
+using System.Runtime.InteropServices;
 using Unmanaged;
 
 namespace Automations.Systems
 {
-    public class StateMachineSystem : SystemBase
+    public readonly struct StateMachineSystem : ISystem
     {
         private readonly ComponentQuery<IsStateful> statefulQuery;
 
-        public StateMachineSystem(World world) : base(world)
+        readonly unsafe InitializeFunction ISystem.Initialize => new(&Initialize);
+        readonly unsafe IterateFunction ISystem.Update => new(&Update);
+        readonly unsafe FinalizeFunction ISystem.Finalize => new(&Finalize);
+
+        [UnmanagedCallersOnly]
+        private static void Initialize(SystemContainer container, World world)
+        {
+        }
+
+        [UnmanagedCallersOnly]
+        private static void Update(SystemContainer container, World world, TimeSpan delta)
+        {
+            ref StateMachineSystem system = ref container.Read<StateMachineSystem>();
+            system.Update(world);
+        }
+
+        [UnmanagedCallersOnly]
+        private static void Finalize(SystemContainer container, World world)
+        {
+            if (container.World == world)
+            {
+                ref StateMachineSystem system = ref container.Read<StateMachineSystem>();
+                system.CleanUp();
+            }
+        }
+
+        public StateMachineSystem()
         {
             statefulQuery = new();
-            Subscribe<StateUpdate>(Update);
         }
 
-        public override void Dispose()
+        private void CleanUp()
         {
             statefulQuery.Dispose();
-            base.Dispose();
         }
 
-        private void Update(StateUpdate message)
+        private void Update(World world)
         {
             statefulQuery.Update(world);
             foreach (var x in statefulQuery)

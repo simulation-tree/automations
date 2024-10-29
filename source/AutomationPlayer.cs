@@ -37,6 +37,11 @@ namespace Automations
             entity.AddComponent<IsAutomationPlayer>();
         }
 
+        public readonly void Dispose()
+        {
+            entity.Dispose();
+        }
+
         public readonly void SetAutomation<T>(Automation automation) where T : unmanaged
         {
             ref IsAutomationPlayer player = ref entity.GetComponentRef<IsAutomationPlayer>();

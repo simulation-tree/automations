@@ -27,6 +27,11 @@ namespace Automations
         {
             this.entity = new(world, existingEntity);
         }
+
+        public readonly void Dispose()
+        {
+            entity.Dispose();
+        }
     }
 
     public readonly struct Automation<T> : IEntity where T : unmanaged
@@ -66,6 +71,11 @@ namespace Automations
             world.AddComponent(entity, new IsAutomation(RuntimeType.Get<Keyframe<T>>(), loop));
             world.CreateArray(entity, keyframes);
             automation = new(world, entity);
+        }
+
+        public readonly void Dispose()
+        {
+            automation.Dispose();
         }
 
         public readonly void AddKeyframe(float time, T value)

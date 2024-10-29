@@ -1,33 +1,23 @@
-﻿using Automations.Events;
-using Automations.Systems;
+﻿using Automations.Systems;
 using Simulation;
+using Simulation.Tests;
 using System;
 using System.Numerics;
-using Unmanaged;
 
 namespace Automations.Tests
 {
-    public class AutomationTests
+    public class AutomationTests : SimulationTests
     {
-        [TearDown]
-        public void CleanUp()
+        protected override void SetUp()
         {
-            Allocations.ThrowIfAny();
-        }
-
-        private void Simulate(World world, TimeSpan delta)
-        {
-            world.Submit(new AutomationUpdate(delta));
-            world.Poll();
+            base.SetUp();
+            Simulator.AddSystem<AutomationPlayingSystem>();
         }
 
         [Test]
         public void MoveTransformAutomation()
         {
-            using World world = new();
-            using AutomationPlayingSystem automations = new(world);
-
-            Automation<Vector3> testAutomation = new(world,
+            Automation<Vector3> testAutomation = new(World,
             [
                 new Keyframe<Vector3>(0, Vector3.Zero),
                 new Keyframe<Vector3>(1f, Vector3.UnitX),
@@ -36,7 +26,7 @@ namespace Automations.Tests
                 new Keyframe<Vector3>(4f, Vector3.One),
             ]);
 
-            Entity thingToMove = new(world);
+            Entity thingToMove = new(World);
             thingToMove.AddComponent<Position>();
             AutomationPlayer thingPlayer = thingToMove.Become<AutomationPlayer>();
             thingPlayer.SetAutomation<Position>(testAutomation);
@@ -46,7 +36,7 @@ namespace Automations.Tests
             TimeSpan time = TimeSpan.Zero;
             while (time < TimeSpan.FromSeconds(5f))
             {
-                Simulate(world, delta);
+                Simulator.Update(delta);
                 time += delta;
                 Vector3 currentPosition = thingToMove.GetComponent<Position>().value;
                 Console.WriteLine(currentPosition);

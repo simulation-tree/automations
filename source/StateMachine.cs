@@ -39,8 +39,8 @@ namespace Automations
             }
         }
 
-        readonly uint IEntity.Value => entity.value;
-        readonly World IEntity.World => entity.world;
+        readonly uint IEntity.Value => entity.GetEntityValue();
+        readonly World IEntity.World => entity.GetWorld();
         readonly Definition IEntity.Definition => new([RuntimeType.Get<IsStateMachine>()], [RuntimeType.Get<AvailableState>(), RuntimeType.Get<Transition>()]);
 
 #if NET
@@ -74,6 +74,11 @@ namespace Automations
             entity.AddComponent(new IsStateMachine(entryState));
             entity.CreateArray(states);
             entity.CreateArray(transitions);
+        }
+
+        public readonly void Dispose()
+        {
+            entity.Dispose();
         }
 
         public readonly void AddTransition(FixedString sourceState, FixedString destinationState, FixedString parameter, Transition.Condition condition, float value)

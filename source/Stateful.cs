@@ -84,6 +84,11 @@ namespace Automations
             entity.AddComponent(new IsStateful(state, stateMachineReference));
         }
 
+        public readonly void Dispose()
+        {
+            entity.Dispose();
+        }
+
         public readonly ref float AddParameter(FixedString name, float defaultValue = 0f)
         {
             ThrowIfParameterAlreadyExists(name);

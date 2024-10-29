@@ -1,31 +1,55 @@
 ﻿using Automations.Components;
-using Automations.Events;
 using Simulation;
+using Simulation.Functions;
 using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Unmanaged;
 
 namespace Automations.Systems
 {
-    public class AutomationPlayingSystem : SystemBase
+    public readonly struct AutomationPlayingSystem : ISystem
     {
         private readonly ComponentQuery<IsAutomationPlayer> playerQuery;
 
-        public AutomationPlayingSystem(World world) : base(world)
+        readonly unsafe InitializeFunction ISystem.Initialize => new(&Initialize);
+        readonly unsafe IterateFunction ISystem.Update => new(&Update);
+        readonly unsafe FinalizeFunction ISystem.Finalize => new(&Finalize);
+
+        [UnmanagedCallersOnly]
+        private static void Initialize(SystemContainer container, World world)
+        {
+        }
+
+        [UnmanagedCallersOnly]
+        private static void Update(SystemContainer container, World world, TimeSpan delta)
+        {
+            ref AutomationPlayingSystem system = ref container.Read<AutomationPlayingSystem>();
+            system.Update(world, delta);
+        }
+
+        [UnmanagedCallersOnly]
+        private static void Finalize(SystemContainer container, World world)
+        {
+            if (container.World == world)
+            {
+                ref AutomationPlayingSystem system = ref container.Read<AutomationPlayingSystem>();
+                system.CleanUp();
+            }
+        }
+
+        public AutomationPlayingSystem()
         {
             playerQuery = new();
-            Subscribe<AutomationUpdate>(Update);
         }
 
-        public override void Dispose()
+        private void CleanUp()
         {
             playerQuery.Dispose();
-            base.Dispose();
         }
 
-        private void Update(AutomationUpdate message)
+        private void Update(World world, TimeSpan delta)
         {
-            TimeSpan delta = message.delta;
             playerQuery.Update(world);
             foreach (var x in playerQuery)
             {

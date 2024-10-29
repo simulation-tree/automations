@@ -59,6 +59,11 @@ namespace Automations
             entity.CreateArray<StateAutomationLink>();
         }
 
+        public readonly void Dispose()
+        {
+            entity.Dispose();
+        }
+
         public readonly ref float AddParameter(FixedString name, float defaultValue = 0f)
         {
             Stateful stateful = entity.As<Stateful>();
