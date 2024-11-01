@@ -12,7 +12,7 @@ namespace Automations.Systems
         private readonly ComponentQuery<IsStateful> statefulQuery;
 
         readonly unsafe InitializeFunction ISystem.Initialize => new(&Initialize);
-        readonly unsafe IterateFunction ISystem.Update => new(&Update);
+        readonly unsafe IterateFunction ISystem.Iterate => new(&Update);
         readonly unsafe FinalizeFunction ISystem.Finalize => new(&Finalize);
 
         [UnmanagedCallersOnly]
