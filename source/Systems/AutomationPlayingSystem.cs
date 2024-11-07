@@ -128,31 +128,31 @@ namespace Automations.Systems
                     {
                         Vector4 keyframeValue = *(Vector4*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
-                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<Vector4>.ElementSize));
+                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector4>.size));
                     }
                     else if (keyframeValueType == RuntimeType.Get<Keyframe<Vector3>>())
                     {
                         Vector3 keyframeValue = *(Vector3*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
-                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<Vector3>.ElementSize));
+                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector3>.size));
                     }
                     else if (keyframeValueType == RuntimeType.Get<Keyframe<Vector2>>())
                     {
                         Vector2 keyframeValue = *(Vector2*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
-                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<Vector2>.ElementSize));
+                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector2>.size));
                     }
                     else if (keyframeValueType == RuntimeType.Get<Keyframe<float>>())
                     {
                         float keyframeValue = *(float*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
-                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<float>.ElementSize));
+                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<float>.size));
                     }
                     else if (keyframeValueType == RuntimeType.Get<Keyframe<FixedString>>())
                     {
                         FixedString keyframeValue = *(FixedString*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
-                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<FixedString>.ElementSize));
+                        world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<FixedString>.size));
                     }
                     else
                     {
@@ -176,7 +176,7 @@ namespace Automations.Systems
                 Vector4 nextKeyframeValue = *(Vector4*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
                 Vector4 value = Vector4.Lerp(currentKeyframeValue, nextKeyframeValue, timeProgress);
                 byte* valueBytes = (byte*)&value;
-                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<Vector4>.ElementSize));
+                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector4>.size));
             }
             else if (keyframeValueType == RuntimeType.Get<Keyframe<Vector3>>())
             {
@@ -184,7 +184,7 @@ namespace Automations.Systems
                 Vector3 nextKeyframeValue = *(Vector3*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
                 Vector3 value = Vector3.Lerp(currentKeyframeValue, nextKeyframeValue, timeProgress);
                 byte* valueBytes = (byte*)&value;
-                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<Vector3>.ElementSize));
+                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector3>.size));
             }
             else if (keyframeValueType == RuntimeType.Get<Keyframe<Vector2>>())
             {
@@ -192,7 +192,7 @@ namespace Automations.Systems
                 Vector2 nextKeyframeValue = *(Vector2*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
                 Vector2 value = Vector2.Lerp(currentKeyframeValue, nextKeyframeValue, timeProgress);
                 byte* valueBytes = (byte*)&value;
-                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<Vector2>.ElementSize));
+                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector2>.size));
             }
             else if (keyframeValueType == RuntimeType.Get<Keyframe<float>>())
             {
@@ -200,7 +200,7 @@ namespace Automations.Systems
                 float nextKeyframeValue = *(float*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
                 float value = currentKeyframeValue + (nextKeyframeValue - currentKeyframeValue) * timeProgress;
                 byte* valueBytes = (byte*)&value;
-                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<float>.ElementSize));
+                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<float>.size));
             }
             else if (keyframeValueType == RuntimeType.Get<byte>())
             {
@@ -208,7 +208,7 @@ namespace Automations.Systems
                 byte nextKeyframeValue = *(byte*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
                 byte value = (byte)(currentKeyframeValue + (nextKeyframeValue - currentKeyframeValue) * timeProgress);
                 byte* valueBytes = &value;
-                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<byte>.ElementSize));
+                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<byte>.size));
             }
             else if (keyframeValueType == RuntimeType.Get<Keyframe<FixedString>>())
             {
@@ -216,7 +216,7 @@ namespace Automations.Systems
                 //FixedString nextKeyframeValue = *(FixedString*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
                 //FixedString value = FixedString.Lerp(currentKeyframeValue, nextKeyframeValue, timeProgress);
                 byte* valueBytes = (byte*)&currentKeyframeValue;
-                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, USpan<FixedString>.ElementSize));
+                world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<FixedString>.size));
             }
             else
             {
