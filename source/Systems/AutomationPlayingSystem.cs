@@ -5,6 +5,7 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Unmanaged;
+using Worlds;
 
 namespace Automations.Systems
 {
@@ -12,12 +13,12 @@ namespace Automations.Systems
     {
         private readonly ComponentQuery<IsAutomationPlayer> playerQuery;
 
-        readonly unsafe InitializeFunction ISystem.Initialize => new(&Initialize);
-        readonly unsafe IterateFunction ISystem.Iterate => new(&Update);
-        readonly unsafe FinalizeFunction ISystem.Finalize => new(&Finalize);
+        readonly unsafe StartSystem ISystem.Start => new(&Start);
+        readonly unsafe UpdateSystem ISystem.Update => new(&Update);
+        readonly unsafe FinishSystem ISystem.Finish => new(&Finish);
 
         [UnmanagedCallersOnly]
-        private static void Initialize(SystemContainer container, World world)
+        private static void Start(SystemContainer container, World world)
         {
         }
 
@@ -29,7 +30,7 @@ namespace Automations.Systems
         }
 
         [UnmanagedCallersOnly]
-        private static void Finalize(SystemContainer container, World world)
+        private static void Finish(SystemContainer container, World world)
         {
             if (container.World == world)
             {
@@ -64,10 +65,10 @@ namespace Automations.Systems
             }
         }
 
-        private unsafe void Evaluate(World world, uint playerEntity, RuntimeType componentType, uint automationEntity, TimeSpan time)
+        private unsafe void Evaluate(World world, uint playerEntity, ComponentType componentType, uint automationEntity, TimeSpan time)
         {
             IsAutomation automationComponent = world.GetComponent<IsAutomation>(automationEntity);
-            RuntimeType keyframeValueType = automationComponent.keyframeType;
+            ArrayType keyframeValueType = automationComponent.keyframeType;
             void* keyframes = world.GetArray(automationEntity, keyframeValueType, out uint keyframeCount);
             if (keyframeCount == 0)
             {
@@ -124,31 +125,31 @@ namespace Automations.Systems
                 else
                 {
                     void* firstKeyframe = (byte*)keyframes;
-                    if (keyframeValueType == RuntimeType.Get<Keyframe<Vector4>>())
+                    if (keyframeValueType == ComponentType.Get<Keyframe<Vector4>>())
                     {
                         Vector4 keyframeValue = *(Vector4*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
                         world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector4>.size));
                     }
-                    else if (keyframeValueType == RuntimeType.Get<Keyframe<Vector3>>())
+                    else if (keyframeValueType == ComponentType.Get<Keyframe<Vector3>>())
                     {
                         Vector3 keyframeValue = *(Vector3*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
                         world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector3>.size));
                     }
-                    else if (keyframeValueType == RuntimeType.Get<Keyframe<Vector2>>())
+                    else if (keyframeValueType == ComponentType.Get<Keyframe<Vector2>>())
                     {
                         Vector2 keyframeValue = *(Vector2*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
                         world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector2>.size));
                     }
-                    else if (keyframeValueType == RuntimeType.Get<Keyframe<float>>())
+                    else if (keyframeValueType == ComponentType.Get<Keyframe<float>>())
                     {
                         float keyframeValue = *(float*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
                         world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<float>.size));
                     }
-                    else if (keyframeValueType == RuntimeType.Get<Keyframe<FixedString>>())
+                    else if (keyframeValueType == ComponentType.Get<Keyframe<FixedString>>())
                     {
                         FixedString keyframeValue = *(FixedString*)((byte*)firstKeyframe + sizeof(float) + sizeof(uint));
                         byte* valueBytes = (byte*)&keyframeValue;
@@ -170,7 +171,7 @@ namespace Automations.Systems
             float timeDelta = nextKeyframeTime - currentKeyframeTime;
             float timeProgress = (timeInSeconds - currentKeyframeTime) / timeDelta;
             uint byteOffset = *(uint*)((byte*)currentKeyframe + sizeof(float)); //todo: handle byte offsets
-            if (keyframeValueType == RuntimeType.Get<Keyframe<Vector4>>())
+            if (keyframeValueType == ArrayType.Get<Keyframe<Vector4>>())
             {
                 Vector4 currentKeyframeValue = *(Vector4*)((byte*)currentKeyframe + sizeof(float) + sizeof(uint));
                 Vector4 nextKeyframeValue = *(Vector4*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
@@ -178,7 +179,7 @@ namespace Automations.Systems
                 byte* valueBytes = (byte*)&value;
                 world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector4>.size));
             }
-            else if (keyframeValueType == RuntimeType.Get<Keyframe<Vector3>>())
+            else if (keyframeValueType == ArrayType.Get<Keyframe<Vector3>>())
             {
                 Vector3 currentKeyframeValue = *(Vector3*)((byte*)currentKeyframe + sizeof(float) + sizeof(uint));
                 Vector3 nextKeyframeValue = *(Vector3*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
@@ -186,7 +187,7 @@ namespace Automations.Systems
                 byte* valueBytes = (byte*)&value;
                 world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector3>.size));
             }
-            else if (keyframeValueType == RuntimeType.Get<Keyframe<Vector2>>())
+            else if (keyframeValueType == ArrayType.Get<Keyframe<Vector2>>())
             {
                 Vector2 currentKeyframeValue = *(Vector2*)((byte*)currentKeyframe + sizeof(float) + sizeof(uint));
                 Vector2 nextKeyframeValue = *(Vector2*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
@@ -194,7 +195,7 @@ namespace Automations.Systems
                 byte* valueBytes = (byte*)&value;
                 world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<Vector2>.size));
             }
-            else if (keyframeValueType == RuntimeType.Get<Keyframe<float>>())
+            else if (keyframeValueType == ArrayType.Get<Keyframe<float>>())
             {
                 float currentKeyframeValue = *(float*)((byte*)currentKeyframe + sizeof(float) + sizeof(uint));
                 float nextKeyframeValue = *(float*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
@@ -202,7 +203,7 @@ namespace Automations.Systems
                 byte* valueBytes = (byte*)&value;
                 world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<float>.size));
             }
-            else if (keyframeValueType == RuntimeType.Get<byte>())
+            else if (keyframeValueType == ArrayType.Get<byte>())
             {
                 byte currentKeyframeValue = *(byte*)((byte*)currentKeyframe + sizeof(float) + sizeof(uint));
                 byte nextKeyframeValue = *(byte*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));
@@ -210,7 +211,7 @@ namespace Automations.Systems
                 byte* valueBytes = &value;
                 world.SetComponent(playerEntity, componentType, new USpan<byte>(valueBytes, TypeInfo<byte>.size));
             }
-            else if (keyframeValueType == RuntimeType.Get<Keyframe<FixedString>>())
+            else if (keyframeValueType == ArrayType.Get<Keyframe<FixedString>>())
             {
                 FixedString currentKeyframeValue = *(FixedString*)((byte*)currentKeyframe + sizeof(float) + sizeof(uint));
                 //FixedString nextKeyframeValue = *(FixedString*)((byte*)nextKeyframe + sizeof(float) + sizeof(uint));

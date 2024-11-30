@@ -1,7 +1,9 @@
 ﻿using System;
+using Worlds;
 
 namespace Automations.Components
 {
+    [Component]
     public struct IsStateMachine
     {
         public uint entryState;

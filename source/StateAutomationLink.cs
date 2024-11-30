@@ -1,13 +1,14 @@
-﻿using Simulation;
-using System;
+﻿using System;
 using Unmanaged;
+using Worlds;
 
 namespace Automations
 {
+    [Array]
     public struct StateAutomationLink
     {
         public int stateNameHash;
-        public RuntimeType componentType;
+        public ComponentType componentType;
         public rint automationReference;
 
 #if NET
@@ -18,7 +19,7 @@ namespace Automations
         }
 #endif
 
-        public StateAutomationLink(FixedString stateName, RuntimeType componentType, rint automationReference)
+        public StateAutomationLink(FixedString stateName, ComponentType componentType, rint automationReference)
         {
             this.stateNameHash = stateName.GetHashCode();
             this.componentType = componentType;

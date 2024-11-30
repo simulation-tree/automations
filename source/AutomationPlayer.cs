@@ -1,18 +1,16 @@
 ﻿using Automations.Components;
-using Simulation;
 using System;
-using System.Diagnostics;
-using Unmanaged;
+using Worlds;
 
 namespace Automations
 {
     public readonly struct AutomationPlayer : IEntity
     {
-        public readonly Entity entity;
+        private readonly Entity entity;
 
         public readonly ref bool IsPaused => ref entity.GetComponentRef<IsAutomationPlayer>().paused;
         public readonly ref TimeSpan Time => ref entity.GetComponentRef<IsAutomationPlayer>().time;
-        public readonly ref RuntimeType ComponentType => ref entity.GetComponentRef<IsAutomationPlayer>().componentType;
+        public readonly ref ComponentType ComponentType => ref entity.GetComponentRef<IsAutomationPlayer>().componentType;
 
         public readonly Automation CurrentAutomation
         {
@@ -26,7 +24,7 @@ namespace Automations
 
         readonly uint IEntity.Value => entity.value;
         readonly World IEntity.World => entity.world;
-        readonly Definition IEntity.Definition => new([RuntimeType.Get<IsAutomationPlayer>()], []);
+        readonly Definition IEntity.Definition => new Definition().AddComponentType<IsAutomationPlayer>();
 
         /// <summary>
         /// Creates a new automation player.
@@ -46,7 +44,7 @@ namespace Automations
         {
             ref IsAutomationPlayer player = ref entity.GetComponentRef<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
-            player.componentType = RuntimeType.Get<T>();
+            player.componentType = ComponentType.Get<T>();
             if (player.automationReference != default)
             {
                 entity.SetReference(player.automationReference, automation);
@@ -67,6 +65,11 @@ namespace Automations
         {
             ref IsAutomationPlayer player = ref entity.GetComponentRef<IsAutomationPlayer>();
             player.paused = false;
+        }
+
+        public static implicit operator Entity(AutomationPlayer player)
+        {
+            return player.entity;
         }
     }
 }

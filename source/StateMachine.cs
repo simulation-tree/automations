@@ -1,14 +1,14 @@
 ﻿using Automations.Components;
-using Simulation;
 using System;
 using System.Diagnostics;
 using Unmanaged;
+using Worlds;
 
 namespace Automations
 {
     public readonly struct StateMachine : IEntity
     {
-        public readonly Entity entity;
+        private readonly Entity entity;
 
         public readonly USpan<AvailableState> AvailableStates => entity.GetArray<AvailableState>();
         public readonly USpan<Transition> Transitions => entity.GetArray<Transition>();
@@ -41,7 +41,7 @@ namespace Automations
 
         readonly uint IEntity.Value => entity.GetEntityValue();
         readonly World IEntity.World => entity.GetWorld();
-        readonly Definition IEntity.Definition => new([RuntimeType.Get<IsStateMachine>()], [RuntimeType.Get<AvailableState>(), RuntimeType.Get<Transition>()]);
+        readonly Definition IEntity.Definition => new Definition().AddComponentType<IsStateMachine>().AddArrayTypes<AvailableState, Transition>();
 
 #if NET
         [Obsolete("Default constructor not available", true)]
@@ -206,6 +206,11 @@ namespace Automations
             {
                 throw new InvalidOperationException($"State machine `{entity}` has no entry state unassigned");
             }
+        }
+
+        public static implicit operator Entity(StateMachine stateMachine)
+        {
+            return stateMachine.entity;
         }
     }
 }

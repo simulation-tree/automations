@@ -1,11 +1,12 @@
 ﻿using System;
-using Unmanaged;
+using Worlds;
 
 namespace Automations.Components
 {
+    [Component]
     public struct IsAutomation
     {
-        public RuntimeType keyframeType;
+        public ArrayType keyframeType;
         public bool loop;
 
 #if NET
@@ -16,7 +17,7 @@ namespace Automations.Components
         }
 #endif
 
-        public IsAutomation(RuntimeType keyframeType, bool loop)
+        public IsAutomation(ArrayType keyframeType, bool loop)
         {
             this.keyframeType = keyframeType;
             this.loop = loop;

@@ -1,8 +1,10 @@
 ﻿using System;
 using Unmanaged;
+using Worlds;
 
 namespace Automations
 {
+    [Array]
     public struct Transition
     {
         public int sourceStateHash;

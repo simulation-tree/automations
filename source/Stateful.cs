@@ -1,14 +1,14 @@
 ﻿using Automations.Components;
-using Simulation;
 using System;
 using System.Diagnostics;
 using Unmanaged;
+using Worlds;
 
 namespace Automations
 {
     public readonly struct Stateful : IEntity
     {
-        public readonly Entity entity;
+        private readonly Entity entity;
 
         public readonly USpan<Parameter> Parameters => entity.GetArray<Parameter>();
 
@@ -25,15 +25,15 @@ namespace Automations
                 if (component.stateMachineReference == default)
                 {
                     component.stateMachineReference = entity.AddReference(value);
-                    component.state = value.entity.GetComponent<IsStateMachine>().entryState;
+                    component.state = value.AsEntity().GetComponent<IsStateMachine>().entryState;
                 }
                 else
                 {
                     uint stateMachineEntity = entity.GetReference(component.stateMachineReference);
-                    if (stateMachineEntity != value.entity.value)
+                    if (stateMachineEntity != value.GetEntityValue())
                     {
                         entity.SetReference(component.stateMachineReference, value);
-                        component.state = value.entity.GetComponent<IsStateMachine>().entryState;
+                        component.state = value.AsEntity().GetComponent<IsStateMachine>().entryState;
                     }
                     else
                     {
@@ -56,7 +56,7 @@ namespace Automations
 
         readonly uint IEntity.Value => entity.value;
         readonly World IEntity.World => entity.world;
-        readonly Definition IEntity.Definition => new([RuntimeType.Get<IsStateful>()], [RuntimeType.Get<Parameter>()]);
+        readonly Definition IEntity.Definition => new Definition().AddComponentType<IsStateful>().AddArrayType<Parameter>();
 
 #if NET
         [Obsolete("Default constructor not available", true)]
@@ -79,7 +79,7 @@ namespace Automations
         {
             entity = new(world);
             entity.CreateArray<Parameter>(0);
-            uint state = stateMachine.entity.GetComponent<IsStateMachine>().entryState;
+            uint state = stateMachine.AsEntity().GetComponent<IsStateMachine>().entryState;
             rint stateMachineReference = entity.AddReference(stateMachine);
             entity.AddComponent(new IsStateful(state, stateMachineReference));
         }
@@ -170,6 +170,11 @@ namespace Automations
             {
                 throw new InvalidOperationException($"Stateful entity `{entity}` has no assigned state");
             }
+        }
+
+        public static implicit operator Entity(Stateful stateful)
+        {
+            return stateful.entity;
         }
     }
 }

@@ -1,7 +1,11 @@
-﻿using Automations.Systems;
+﻿using Automations.Components;
+using Automations.Systems;
 using Simulation;
 using Simulation.Tests;
 using System;
+using System.Numerics;
+using Unmanaged;
+using Worlds;
 
 namespace Automations.Tests
 {
@@ -10,6 +14,26 @@ namespace Automations.Tests
         protected override void SetUp()
         {
             base.SetUp();
+            ComponentType.Register<IsStateful>();
+            ComponentType.Register<IsStateMachine>();
+            ComponentType.Register<IsAutomation>();
+            ComponentType.Register<IsAutomationPlayer>();
+            ComponentType.Register<Position>();
+            ComponentType.Register<float>();
+            ComponentType.Register<Keyframe<float>>();
+            ComponentType.Register<Keyframe<Vector2>>();
+            ComponentType.Register<Keyframe<Vector3>>();
+            ComponentType.Register<Keyframe<Vector4>>();
+            ComponentType.Register<Keyframe<FixedString>>();
+            ArrayType.Register<Keyframe<float>>();
+            ArrayType.Register<Keyframe<Vector2>>();
+            ArrayType.Register<Keyframe<Vector3>>();
+            ArrayType.Register<Keyframe<Vector4>>();
+            ArrayType.Register<Keyframe<FixedString>>();
+            ArrayType.Register<AvailableState>();
+            ArrayType.Register<Transition>();
+            ArrayType.Register<Parameter>();
+            ArrayType.Register<StateAutomationLink>();
             Simulator.AddSystem<StateMachineSystem>();
             Simulator.AddSystem<StateAutomationSystem>();
             Simulator.AddSystem<AutomationPlayingSystem>();

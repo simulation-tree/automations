@@ -1,8 +1,10 @@
-﻿using Automations.Systems;
+﻿using Automations.Components;
+using Automations.Systems;
 using Simulation;
 using Simulation.Tests;
 using System;
 using System.Numerics;
+using Worlds;
 
 namespace Automations.Tests
 {
@@ -11,6 +13,11 @@ namespace Automations.Tests
         protected override void SetUp()
         {
             base.SetUp();
+            ComponentType.Register<IsAutomation>();
+            ComponentType.Register<IsAutomationPlayer>();
+            ComponentType.Register<Position>();
+            ArrayType.Register<Keyframe<Vector3>>();
+            ArrayType.Register<Keyframe<Vector4>>();
             Simulator.AddSystem<AutomationPlayingSystem>();
         }
 

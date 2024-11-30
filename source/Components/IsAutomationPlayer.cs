@@ -1,13 +1,13 @@
-﻿using Simulation;
-using System;
-using Unmanaged;
+﻿using System;
+using Worlds;
 
 namespace Automations.Components
 {
+    [Component]
     public struct IsAutomationPlayer
     {
         public rint automationReference;
-        public RuntimeType componentType;
+        public ComponentType componentType;
         public TimeSpan time;
         public bool paused;
 
@@ -19,7 +19,7 @@ namespace Automations.Components
         }
 #endif
 
-        public IsAutomationPlayer(rint automationReference, RuntimeType componentType)
+        public IsAutomationPlayer(rint automationReference, ComponentType componentType)
         {
             this.automationReference = automationReference;
             this.componentType = componentType;

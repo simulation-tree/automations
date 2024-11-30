@@ -1,13 +1,13 @@
 ﻿using Automations.Components;
-using Simulation;
 using System;
 using Unmanaged;
+using Worlds;
 
 namespace Automations
 {
     public readonly struct StatefulAutomationPlayer : IEntity
     {
-        public readonly Entity entity;
+        private readonly Entity entity;
 
         public readonly StateMachine StateMachine
         {
@@ -34,7 +34,7 @@ namespace Automations
 
         readonly uint IEntity.Value => entity.value;
         readonly World IEntity.World => entity.world;
-        readonly Definition IEntity.Definition => new([RuntimeType.Get<IsStateful>(), RuntimeType.Get<IsAutomationPlayer>()], [RuntimeType.Get<Parameter>(), RuntimeType.Get<StateAutomationLink>()]);
+        readonly Definition IEntity.Definition => new Definition().AddComponentTypes<IsStateful, IsAutomationPlayer>().AddArrayTypes<Parameter, StateAutomationLink>();
 
 #if NET
         [Obsolete("Default constructor not available", true)]
@@ -51,7 +51,7 @@ namespace Automations
         public StatefulAutomationPlayer(World world, StateMachine stateMachine)
         {
             entity = new(world);
-            uint state = stateMachine.entity.GetComponent<IsStateMachine>().entryState;
+            uint state = stateMachine.AsEntity().GetComponent<IsStateMachine>().entryState;
             rint stateMachineReference = entity.AddReference(stateMachine);
             entity.AddComponent(new IsStateful(state, stateMachineReference));
             entity.AddComponent<IsAutomationPlayer>();
@@ -97,7 +97,7 @@ namespace Automations
             StateMachine.ThrowIfStateIsMissing(stateName);
             int stateNameHash = stateName.GetHashCode();
             USpan<StateAutomationLink> links = entity.GetArray<StateAutomationLink>();
-            RuntimeType componentType = RuntimeType.Get<T>();
+            ComponentType componentType = ComponentType.Get<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
             {
@@ -107,7 +107,7 @@ namespace Automations
                     rint automationReference = existingLink.automationReference;
                     uint automationEntity = entity.GetReference(automationReference);
                     existingLink.componentType = componentType;
-                    if (automation.entity.value != automationEntity)
+                    if (automation.GetEntityValue() != automationEntity)
                     {
                         entity.SetReference(automationReference, automation);
                     }
@@ -121,6 +121,16 @@ namespace Automations
             newLink.stateNameHash = stateNameHash;
             newLink.componentType = componentType;
             newLink.automationReference = entity.AddReference(automation);
+        }
+
+        public static implicit operator Entity(StatefulAutomationPlayer entity)
+        {
+            return entity.entity;
+        }
+
+        public static implicit operator Stateful(StatefulAutomationPlayer entity)
+        {
+            return entity.entity.As<Stateful>();
         }
     }
 }
