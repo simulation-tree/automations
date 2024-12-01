@@ -3,8 +3,6 @@ using Automations.Systems;
 using Simulation;
 using Simulation.Tests;
 using System;
-using System.Numerics;
-using Unmanaged;
 using Worlds;
 
 namespace Automations.Tests
@@ -20,16 +18,16 @@ namespace Automations.Tests
             ComponentType.Register<IsAutomationPlayer>();
             ComponentType.Register<Position>();
             ComponentType.Register<float>();
-            ComponentType.Register<Keyframe<float>>();
-            ComponentType.Register<Keyframe<Vector2>>();
-            ComponentType.Register<Keyframe<Vector3>>();
-            ComponentType.Register<Keyframe<Vector4>>();
-            ComponentType.Register<Keyframe<FixedString>>();
-            ArrayType.Register<Keyframe<float>>();
-            ArrayType.Register<Keyframe<Vector2>>();
-            ArrayType.Register<Keyframe<Vector3>>();
-            ArrayType.Register<Keyframe<Vector4>>();
-            ArrayType.Register<Keyframe<FixedString>>();
+            ArrayType.Register<KeyframeTime>();
+            ArrayType.Register<KeyframeValue1>();
+            ArrayType.Register<KeyframeValue2>();
+            ArrayType.Register<KeyframeValue4>();
+            ArrayType.Register<KeyframeValue8>();
+            ArrayType.Register<KeyframeValue16>();
+            ArrayType.Register<KeyframeValue32>();
+            ArrayType.Register<KeyframeValue64>();
+            ArrayType.Register<KeyframeValue128>();
+            ArrayType.Register<KeyframeValue256>();
             ArrayType.Register<AvailableState>();
             ArrayType.Register<Transition>();
             ArrayType.Register<Parameter>();
@@ -72,8 +70,8 @@ namespace Automations.Tests
         [Test]
         public void StatefulEntityWithAutomations()
         {
-            Automation<float> defaultAutomation = new(World, [new(0f, 0f)]);
-            Automation<float> triangleWave = new(World, [new(0f, 0f), new(1f, 1f), new(2f, 0f)], true);
+            Automation<float> defaultAutomation = new(World, InterpolationMethod.FloatLinear, [new(0f, 0f)]);
+            Automation<float> triangleWave = new(World, InterpolationMethod.FloatLinear, [new(0f, 0f), new(1f, 1f), new(2f, 0f)], true);
             StateMachine machine = new(World);
             machine.AddState("Entry State");
             machine.AddState("Other State");

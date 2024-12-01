@@ -16,25 +16,59 @@ namespace Automations.Tests
             ComponentType.Register<IsAutomation>();
             ComponentType.Register<IsAutomationPlayer>();
             ComponentType.Register<Position>();
-            ArrayType.Register<Keyframe<Vector3>>();
-            ArrayType.Register<Keyframe<Vector4>>();
+            ArrayType.Register<KeyframeTime>();
+            ArrayType.Register<KeyframeValue1>();
+            ArrayType.Register<KeyframeValue2>();
+            ArrayType.Register<KeyframeValue4>();
+            ArrayType.Register<KeyframeValue8>();
+            ArrayType.Register<KeyframeValue16>();
+            ArrayType.Register<KeyframeValue32>();
+            ArrayType.Register<KeyframeValue64>();
+            ArrayType.Register<KeyframeValue128>();
+            ArrayType.Register<KeyframeValue256>();
             Simulator.AddSystem<AutomationPlayingSystem>();
+        }
+
+        [Test]
+        public void CreateAutomationWithKeyframes()
+        {
+            Automation<Vector3> testAutomation = new(World,
+            [
+                (0, Vector3.Zero),
+                (1f, Vector3.UnitX),
+                (2f, Vector3.UnitY),
+                (3f, Vector3.UnitZ),
+                (4f, Vector3.One),
+            ]);
+
+            Assert.That(testAutomation.Count, Is.EqualTo(5));
+            Assert.That(testAutomation[0].time, Is.EqualTo(0f));
+            Assert.That(testAutomation[0].value, Is.EqualTo(Vector3.Zero));
+            Assert.That(testAutomation[1].time, Is.EqualTo(1f));
+            Assert.That(testAutomation[1].value, Is.EqualTo(Vector3.UnitX));
+            Assert.That(testAutomation[2].time, Is.EqualTo(2f));
+            Assert.That(testAutomation[2].value, Is.EqualTo(Vector3.UnitY));
+            Assert.That(testAutomation[3].time, Is.EqualTo(3f));
+            Assert.That(testAutomation[3].value, Is.EqualTo(Vector3.UnitZ));
+            Assert.That(testAutomation[4].time, Is.EqualTo(4f));
+            Assert.That(testAutomation[4].value, Is.EqualTo(Vector3.One));
         }
 
         [Test]
         public void MoveTransformAutomation()
         {
-            Automation<Vector3> testAutomation = new(World,
+            Automation<Vector3> testAutomation = new(World, InterpolationMethod.Vector3Linear,
             [
-                new Keyframe<Vector3>(0, Vector3.Zero),
-                new Keyframe<Vector3>(1f, Vector3.UnitX),
-                new Keyframe<Vector3>(2f, Vector3.UnitY),
-                new Keyframe<Vector3>(3f, Vector3.UnitZ),
-                new Keyframe<Vector3>(4f, Vector3.One),
+                (0, Vector3.Zero),
+                (1f, Vector3.UnitX),
+                (2f, Vector3.UnitY),
+                (3f, Vector3.UnitZ),
+                (4f, Vector3.One),
             ]);
 
             Entity thingToMove = new(World);
             thingToMove.AddComponent<Position>();
+            
             AutomationPlayer thingPlayer = thingToMove.Become<AutomationPlayer>();
             thingPlayer.SetAutomation<Position>(testAutomation);
             thingPlayer.Play();

@@ -7,6 +7,10 @@ namespace Automations.Components
     public struct IsAutomationPlayer
     {
         public rint automationReference;
+
+        /// <summary>
+        /// The type of component on this entity being automated.
+        /// </summary>
         public ComponentType componentType;
         public TimeSpan time;
         public bool paused;
