@@ -1,42 +1,42 @@
 ﻿using Automations.Components;
 using Collections;
 using Simulation;
-using Simulation.Functions;
 using System;
-using System.Runtime.InteropServices;
 using Unmanaged;
 using Worlds;
 
 namespace Automations.Systems
 {
-    public readonly struct AutomationPlayingSystem : ISystem
+    public readonly partial struct AutomationPlayingSystem : ISystem
     {
         private readonly ComponentQuery<IsAutomationPlayer> playerQuery;
         private readonly List<Interpolation> interpolationFunctions;
 
-        readonly unsafe StartSystem ISystem.Start => new(&Start);
-        readonly unsafe UpdateSystem ISystem.Update => new(&Update);
-        readonly unsafe FinishSystem ISystem.Finish => new(&Finish);
-
-        [UnmanagedCallersOnly]
-        private static void Start(SystemContainer container, World world)
+        void ISystem.Start(in SystemContainer systemContainer, in World world)
         {
         }
 
-        [UnmanagedCallersOnly]
-        private static void Update(SystemContainer container, World world, TimeSpan delta)
+        void ISystem.Update(in SystemContainer systemContainer, in World world, in TimeSpan delta)
         {
-            ref AutomationPlayingSystem system = ref container.Read<AutomationPlayingSystem>();
-            system.Update(world, delta);
-        }
-
-        [UnmanagedCallersOnly]
-        private static void Finish(SystemContainer container, World world)
-        {
-            if (container.World == world)
+            playerQuery.Update(world);
+            foreach (var x in playerQuery)
             {
-                ref AutomationPlayingSystem system = ref container.Read<AutomationPlayingSystem>();
-                system.CleanUp();
+                uint playerEntity = x.entity;
+                ref IsAutomationPlayer player = ref x.Component1;
+                if (player.automationReference != default)
+                {
+                    player.time += delta;
+                    uint automationEntity = world.GetReference(playerEntity, player.automationReference);
+                    Evaluate(world, playerEntity, player.componentType, automationEntity, player.time);
+                }
+            }
+        }
+
+        void ISystem.Finish(in SystemContainer systemContainer, in World world)
+        {
+            if (systemContainer.World == world)
+            {
+                CleanUp();
             }
         }
 
@@ -54,22 +54,6 @@ namespace Automations.Systems
         {
             interpolationFunctions.Dispose();
             playerQuery.Dispose();
-        }
-
-        private readonly void Update(World world, TimeSpan delta)
-        {
-            playerQuery.Update(world);
-            foreach (var x in playerQuery)
-            {
-                uint playerEntity = x.entity;
-                ref IsAutomationPlayer player = ref x.Component1;
-                if (player.automationReference != default)
-                {
-                    player.time += delta;
-                    uint automationEntity = world.GetReference(playerEntity, player.automationReference);
-                    Evaluate(world, playerEntity, player.componentType, automationEntity, player.time);
-                }
-            }
         }
 
         public readonly InterpolationMethod AddInterpolation(Interpolation interpolation)
