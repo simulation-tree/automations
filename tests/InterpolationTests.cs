@@ -26,7 +26,7 @@ namespace Automations.Tests
             ArrayType.Register<KeyframeValue64>();
             ArrayType.Register<KeyframeValue128>();
             ArrayType.Register<KeyframeValue256>();
-            Simulator.AddSystem<AutomationPlayingSystem>();
+            Simulator.AddSystem(new AutomationPlayingSystem());
         }
 
         [Test]

@@ -19,14 +19,16 @@ namespace Automations
             {
                 ThrowIfNoStatesAvailable();
                 ThrowIfEntryStateIsUnassigned();
-                ref IsStateMachine stateMachine = ref entity.GetComponentRef<IsStateMachine>();
+
+                ref IsStateMachine stateMachine = ref entity.GetComponent<IsStateMachine>();
                 AvailableState state = AvailableStates[stateMachine.entryState - 1];
                 return state.name;
             }
             set
             {
                 ThrowIfStateIsMissing(value);
-                ref IsStateMachine stateMachine = ref entity.GetComponentRef<IsStateMachine>();
+
+                ref IsStateMachine stateMachine = ref entity.GetComponent<IsStateMachine>();
                 USpan<AvailableState> states = AvailableStates;
                 for (uint index = 0; index < states.Length; index++)
                 {
@@ -201,7 +203,7 @@ namespace Automations
         [Conditional("DEBUG")]
         public readonly void ThrowIfEntryStateIsUnassigned()
         {
-            ref IsStateMachine stateMachine = ref entity.GetComponentRef<IsStateMachine>();
+            ref IsStateMachine stateMachine = ref entity.GetComponent<IsStateMachine>();
             if (stateMachine.entryState == default)
             {
                 throw new InvalidOperationException($"State machine `{entity}` has no entry state unassigned");

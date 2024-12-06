@@ -8,46 +8,22 @@ namespace Automations.Systems
 {
     public readonly partial struct StateAutomationSystem : ISystem
     {
-        private readonly ComponentQuery<IsStateful, IsAutomationPlayer> statefulQuery;
-
         void ISystem.Start(in SystemContainer systemContainer, in World world)
         {
         }
 
         void ISystem.Update(in SystemContainer systemContainer, in World world, in TimeSpan delta)
         {
-            Update(world);
-        }
-
-        void ISystem.Finish(in SystemContainer systemContainer, in World world)
-        {
-            if (systemContainer.World == world)
+            ComponentQuery<IsStateful, IsAutomationPlayer> query = new(world);
+            foreach (var r in query)
             {
-                CleanUp();
-            }
-        }
-
-        public StateAutomationSystem()
-        {
-            statefulQuery = new();
-        }
-
-        private void CleanUp()
-        {
-            statefulQuery.Dispose();
-        }
-
-        private void Update(World world)
-        {
-            statefulQuery.Update(world);
-            foreach (var x in statefulQuery)
-            {
-                uint statefulEntity = x.entity;
-                IsStateful statefulComponent = x.Component1;
+                ref IsStateful statefulComponent = ref r.component1;
+                ref IsAutomationPlayer player = ref r.component2;
+                uint statefulEntity = r.entity;
                 if (statefulComponent.state == default)
                 {
                     //state not yet assigned
-                    continue;
+                    return;
                 }
 
                 rint stateMachineReference = statefulComponent.stateMachineReference;
@@ -60,7 +36,6 @@ namespace Automations.Systems
                 {
                     if (link.stateNameHash == stateNameHash)
                     {
-                        ref IsAutomationPlayer player = ref x.Component2;
                         ref rint automationReference = ref player.automationReference;
                         uint desiredAutomationEntity = world.GetReference(statefulEntity, link.automationReference);
                         if (automationReference == default)
@@ -88,6 +63,14 @@ namespace Automations.Systems
                     }
                 }
             }
+        }
+
+        void ISystem.Finish(in SystemContainer systemContainer, in World world)
+        {
+        }
+
+        void IDisposable.Dispose()
+        {
         }
     }
 }

@@ -26,10 +26,10 @@ namespace Automations
 
         private readonly Entity entity;
 
-        public readonly ref bool Loop => ref entity.GetComponentRef<IsAutomation>().loop;
+        public readonly ref bool Loop => ref entity.GetComponent<IsAutomation>().loop;
         public readonly USpan<float> KeyframeTimes => entity.GetArray<KeyframeTime>().As<float>();
         public readonly Allocation KeyframeValues => entity.GetArray(KeyframeType);
-        public readonly ArrayType KeyframeType => entity.GetComponentRef<IsAutomation>().keyframeType;
+        public readonly ArrayType KeyframeType => entity.GetComponent<IsAutomation>().keyframeType;
         public readonly uint Count => entity.GetArrayLength<KeyframeTime>();
 
         readonly uint IEntity.Value => entity.value;
@@ -221,7 +221,7 @@ namespace Automations
         public readonly void AddKeyframe(float time, T value)
         {
             ArrayType keyframeType = Automation.GetKeyframeType<T>();
-            ref IsAutomation component = ref automation.AsEntity().GetComponentRef<IsAutomation>();
+            ref IsAutomation component = ref automation.AsEntity().GetComponent<IsAutomation>();
             component.keyframeType = keyframeType;
 
             uint keyframeCount = Count;

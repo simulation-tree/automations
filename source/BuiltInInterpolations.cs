@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace Automations.Systems
+namespace Automations
 {
     public static class BuiltInInterpolations
     {

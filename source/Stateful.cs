@@ -21,7 +21,7 @@ namespace Automations
             }
             set
             {
-                ref IsStateful component = ref entity.GetComponentRef<IsStateful>();
+                ref IsStateful component = ref entity.GetComponent<IsStateful>();
                 if (component.stateMachineReference == default)
                 {
                     component.stateMachineReference = entity.AddReference(value);
@@ -48,7 +48,7 @@ namespace Automations
             get
             {
                 ThrowIfStateIsUnassigned();
-                ref IsStateful isStateful = ref entity.GetComponentRef<IsStateful>();
+                ref IsStateful isStateful = ref entity.GetComponent<IsStateful>();
                 AvailableState state = StateMachine.AvailableStates[isStateful.state - 1];
                 return state.name;
             }
@@ -165,7 +165,7 @@ namespace Automations
         [Conditional("DEBUG")]
         public readonly void ThrowIfStateIsUnassigned()
         {
-            ref IsStateful isStateful = ref entity.GetComponentRef<IsStateful>();
+            ref IsStateful isStateful = ref entity.GetComponent<IsStateful>();
             if (isStateful.state == default)
             {
                 throw new InvalidOperationException($"Stateful entity `{entity}` has no assigned state");

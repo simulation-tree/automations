@@ -9,7 +9,6 @@ namespace Automations.Systems
 {
     public readonly partial struct AutomationPlayingSystem : ISystem
     {
-        private readonly ComponentQuery<IsAutomationPlayer> playerQuery;
         private readonly List<Interpolation> interpolationFunctions;
 
         void ISystem.Start(in SystemContainer systemContainer, in World world)
@@ -18,31 +17,26 @@ namespace Automations.Systems
 
         void ISystem.Update(in SystemContainer systemContainer, in World world, in TimeSpan delta)
         {
-            playerQuery.Update(world);
-            foreach (var x in playerQuery)
+            ComponentQuery<IsAutomationPlayer> query = new(world);
+            foreach (var r in query)
             {
-                uint playerEntity = x.entity;
-                ref IsAutomationPlayer player = ref x.Component1;
+                uint entity = r.entity;
+                ref IsAutomationPlayer player = ref r.component1;
                 if (player.automationReference != default)
                 {
                     player.time += delta;
-                    uint automationEntity = world.GetReference(playerEntity, player.automationReference);
-                    Evaluate(world, playerEntity, player.componentType, automationEntity, player.time);
+                    uint automationEntity = world.GetReference(entity, player.automationReference);
+                    Evaluate(world, entity, player.componentType, automationEntity, player.time);
                 }
             }
         }
 
         void ISystem.Finish(in SystemContainer systemContainer, in World world)
         {
-            if (systemContainer.World == world)
-            {
-                CleanUp();
-            }
         }
 
         public AutomationPlayingSystem()
         {
-            playerQuery = new();
             interpolationFunctions = new();
             foreach (Interpolation interpolation in BuiltInInterpolations.all)
             {
@@ -50,10 +44,9 @@ namespace Automations.Systems
             }
         }
 
-        private readonly void CleanUp()
+        void IDisposable.Dispose()
         {
             interpolationFunctions.Dispose();
-            playerQuery.Dispose();
         }
 
         public readonly InterpolationMethod AddInterpolation(Interpolation interpolation)

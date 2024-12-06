@@ -8,42 +8,17 @@ namespace Automations.Systems
 {
     public readonly partial struct StateMachineSystem : ISystem
     {
-        private readonly ComponentQuery<IsStateful> statefulQuery;
-
         void ISystem.Start(in SystemContainer systemContainer, in World world)
         {
         }
 
         void ISystem.Update(in SystemContainer systemContainer, in World world, in TimeSpan delta)
         {
-            Update(world);
-        }
-
-        void ISystem.Finish(in SystemContainer systemContainer, in World world)
-        {
-            if (systemContainer.World == world)
+            ComponentQuery<IsStateful> query = new(world);
+            foreach (var r in query)
             {
-                CleanUp();
-            }
-        }
-
-        public StateMachineSystem()
-        {
-            statefulQuery = new();
-        }
-
-        private void CleanUp()
-        {
-            statefulQuery.Dispose();
-        }
-
-        private void Update(World world)
-        {
-            statefulQuery.Update(world);
-            foreach (var x in statefulQuery)
-            {
-                uint statefulEntity = x.entity;
-                ref IsStateful stateful = ref x.Component1;
+                ref IsStateful stateful = ref r.component1;
+                uint statefulEntity = r.entity;
                 if (stateful.stateMachineReference == default)
                 {
                     throw new InvalidOperationException($"Stateful entity `{statefulEntity}` does not have a state machine reference");
@@ -83,6 +58,14 @@ namespace Automations.Systems
                     }
                 }
             }
+        }
+
+        void ISystem.Finish(in SystemContainer systemContainer, in World world)
+        {
+        }
+
+        void IDisposable.Dispose()
+        {
         }
 
         private static bool IsConditionMet(Transition transition, USpan<Parameter> parameters)

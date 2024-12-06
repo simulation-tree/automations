@@ -8,9 +8,9 @@ namespace Automations
     {
         private readonly Entity entity;
 
-        public readonly ref bool IsPaused => ref entity.GetComponentRef<IsAutomationPlayer>().paused;
-        public readonly ref TimeSpan Time => ref entity.GetComponentRef<IsAutomationPlayer>().time;
-        public readonly ref ComponentType ComponentType => ref entity.GetComponentRef<IsAutomationPlayer>().componentType;
+        public readonly ref bool IsPaused => ref entity.GetComponent<IsAutomationPlayer>().paused;
+        public readonly ref TimeSpan Time => ref entity.GetComponent<IsAutomationPlayer>().time;
+        public readonly ref ComponentType ComponentType => ref entity.GetComponent<IsAutomationPlayer>().componentType;
 
         public readonly Automation CurrentAutomation
         {
@@ -42,7 +42,7 @@ namespace Automations
 
         public readonly void SetAutomation<T>(Automation automation) where T : unmanaged
         {
-            ref IsAutomationPlayer player = ref entity.GetComponentRef<IsAutomationPlayer>();
+            ref IsAutomationPlayer player = ref entity.GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
             player.componentType = ComponentType.Get<T>();
             if (player.automationReference != default)
@@ -57,13 +57,13 @@ namespace Automations
 
         public readonly void Pause()
         {
-            ref IsAutomationPlayer player = ref entity.GetComponentRef<IsAutomationPlayer>();
+            ref IsAutomationPlayer player = ref entity.GetComponent<IsAutomationPlayer>();
             player.paused = true;
         }
 
         public readonly void Play()
         {
-            ref IsAutomationPlayer player = ref entity.GetComponentRef<IsAutomationPlayer>();
+            ref IsAutomationPlayer player = ref entity.GetComponent<IsAutomationPlayer>();
             player.paused = false;
         }
 
