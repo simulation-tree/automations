@@ -64,10 +64,6 @@ namespace Automations.Systems
         {
         }
 
-        void IDisposable.Dispose()
-        {
-        }
-
         private static bool IsConditionMet(Transition transition, USpan<Parameter> parameters)
         {
             float value = transition.value;

@@ -68,9 +68,5 @@ namespace Automations.Systems
         void ISystem.Finish(in SystemContainer systemContainer, in World world)
         {
         }
-
-        void IDisposable.Dispose()
-        {
-        }
     }
 }

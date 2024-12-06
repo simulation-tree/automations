@@ -33,6 +33,10 @@ namespace Automations.Systems
 
         void ISystem.Finish(in SystemContainer systemContainer, in World world)
         {
+            if (systemContainer.World == world)
+            {
+                interpolationFunctions.Dispose();
+            }
         }
 
         public AutomationPlayingSystem()
@@ -42,11 +46,6 @@ namespace Automations.Systems
             {
                 AddInterpolation(interpolation);
             }
-        }
-
-        void IDisposable.Dispose()
-        {
-            interpolationFunctions.Dispose();
         }
 
         public readonly InterpolationMethod AddInterpolation(Interpolation interpolation)
