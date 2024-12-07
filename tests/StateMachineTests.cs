@@ -32,9 +32,9 @@ namespace Automations.Tests
             ArrayType.Register<Transition>();
             ArrayType.Register<Parameter>();
             ArrayType.Register<StateAutomationLink>();
-            Simulator.AddSystem(new StateMachineSystem());
-            Simulator.AddSystem(new StateAutomationSystem());
-            Simulator.AddSystem(new AutomationPlayingSystem());
+            Simulator.AddSystem<StateMachineSystem>();
+            Simulator.AddSystem<StateAutomationSystem>();
+            Simulator.AddSystem<AutomationPlayingSystem>();
         }
 
         [Test]

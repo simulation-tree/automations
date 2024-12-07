@@ -11,8 +11,23 @@ namespace Automations.Systems
     {
         private readonly List<Interpolation> interpolationFunctions;
 
+        private AutomationPlayingSystem(List<Interpolation> interpolationFunctions)
+        {
+            this.interpolationFunctions = interpolationFunctions;
+        }
+
         void ISystem.Start(in SystemContainer systemContainer, in World world)
         {
+            if (systemContainer.World == world)
+            {
+                List<Interpolation> interpolationFunctions = new();
+                foreach (Interpolation interpolation in BuiltInInterpolations.all)
+                {
+                    interpolationFunctions.Add(interpolation);
+                }
+
+                systemContainer.Write(new AutomationPlayingSystem(interpolationFunctions));
+            }
         }
 
         void ISystem.Update(in SystemContainer systemContainer, in World world, in TimeSpan delta)
@@ -36,15 +51,6 @@ namespace Automations.Systems
             if (systemContainer.World == world)
             {
                 interpolationFunctions.Dispose();
-            }
-        }
-
-        public AutomationPlayingSystem()
-        {
-            interpolationFunctions = new();
-            foreach (Interpolation interpolation in BuiltInInterpolations.all)
-            {
-                AddInterpolation(interpolation);
             }
         }
 
