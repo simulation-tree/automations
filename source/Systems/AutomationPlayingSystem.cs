@@ -131,8 +131,11 @@ namespace Automations.Systems
             }
             else
             {
-                Interpolation interpolation = interpolationFunctions[(byte)(automationComponent.interpolationMethod.value - 1)];
+                byte index = automationComponent.interpolationMethod.value;
+                index--;
                 void* component = world.GetComponent(playerEntity, componentType);
+
+                Interpolation interpolation = interpolationFunctions[index];
                 interpolation.Invoke(currentKeyframe, nextKeyframe, timeProgress, component, componentType.Size);
             }
         }
