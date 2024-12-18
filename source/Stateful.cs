@@ -17,7 +17,8 @@ namespace Automations
             get
             {
                 rint stateMachineReference = entity.GetComponent<IsStateful>().stateMachineReference;
-                return entity.GetReference<StateMachine>(stateMachineReference);
+                uint stateMachineEntity = entity.GetReference(stateMachineReference);
+                return new Entity(entity.GetWorld(), stateMachineEntity).As<StateMachine>();
             }
             set
             {
