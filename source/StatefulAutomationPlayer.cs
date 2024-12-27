@@ -34,7 +34,11 @@ namespace Automations
 
         readonly uint IEntity.Value => entity.value;
         readonly World IEntity.World => entity.world;
-        readonly Definition IEntity.Definition => new Definition().AddComponentTypes<IsStateful, IsAutomationPlayer>().AddArrayTypes<Parameter, StateAutomationLink>();
+
+        readonly Definition IEntity.GetDefinition(Schema schema)
+        {
+            return new Definition().AddComponentTypes<IsStateful, IsAutomationPlayer>(schema).AddArrayTypes<Parameter, StateAutomationLink>(schema);
+        }
 
 #if NET
         [Obsolete("Default constructor not available", true)]
@@ -97,7 +101,7 @@ namespace Automations
             StateMachine.ThrowIfStateIsMissing(stateName);
             int stateNameHash = stateName.GetHashCode();
             USpan<StateAutomationLink> links = entity.GetArray<StateAutomationLink>();
-            ComponentType componentType = ComponentType.Get<T>();
+            ComponentType componentType = entity.GetWorld().Schema.GetComponent<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
             {

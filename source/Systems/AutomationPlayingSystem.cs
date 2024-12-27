@@ -71,8 +71,8 @@ namespace Automations.Systems
                 return;
             }
 
+            ushort keyframeSize = world.Schema.GetArrayElementSize(keyframeType);
             float timeInSeconds = (float)time.TotalSeconds;
-            uint keyframeTypeSize = keyframeType.Size;
             float finalKeyframeTime = keyframeTimes[keyframeCount - 1];
             if (timeInSeconds >= finalKeyframeTime)
             {
@@ -113,8 +113,8 @@ namespace Automations.Systems
                 }
             }
 
-            void* currentKeyframe = keyframeValues.Read(current * keyframeTypeSize);
-            void* nextKeyframe = keyframeValues.Read(next * keyframeTypeSize);
+            void* currentKeyframe = keyframeValues.Read(current * keyframeSize);
+            void* nextKeyframe = keyframeValues.Read(next * keyframeSize);
             float currentKeyframeTime = keyframeTimes[current];
             float nextKeyframeTime = keyframeTimes[next];
             float timeDelta = nextKeyframeTime - currentKeyframeTime;
@@ -124,10 +124,11 @@ namespace Automations.Systems
                 timeProgress = 0f;
             }
 
+            ushort componentSize = world.Schema.GetComponentSize(componentType);
             if (automationComponent.interpolationMethod == default)
             {
                 void* component = world.GetComponent(playerEntity, componentType);
-                System.Runtime.CompilerServices.Unsafe.CopyBlock(component, currentKeyframe, componentType.Size);
+                System.Runtime.CompilerServices.Unsafe.CopyBlock(component, currentKeyframe, componentSize);
             }
             else
             {
@@ -136,7 +137,7 @@ namespace Automations.Systems
                 void* component = world.GetComponent(playerEntity, componentType);
 
                 Interpolation interpolation = interpolationFunctions[index];
-                interpolation.Invoke(currentKeyframe, nextKeyframe, timeProgress, component, componentType.Size);
+                interpolation.Invoke(currentKeyframe, nextKeyframe, timeProgress, component, componentSize);
             }
         }
     }

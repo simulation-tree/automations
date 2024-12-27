@@ -24,7 +24,11 @@ namespace Automations
 
         readonly uint IEntity.Value => entity.value;
         readonly World IEntity.World => entity.world;
-        readonly Definition IEntity.Definition => new Definition().AddComponentType<IsAutomationPlayer>();
+
+        readonly Definition IEntity.GetDefinition(Schema schema)
+        {
+            return new Definition().AddComponentType<IsAutomationPlayer>(schema);
+        }
 
         /// <summary>
         /// Creates a new automation player.
@@ -44,7 +48,7 @@ namespace Automations
         {
             ref IsAutomationPlayer player = ref entity.GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
-            player.componentType = ComponentType.Get<T>();
+            player.componentType = entity.GetWorld().Schema.GetComponent<T>();
             if (player.automationReference != default)
             {
                 entity.SetReference(player.automationReference, automation);

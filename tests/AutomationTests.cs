@@ -1,6 +1,5 @@
 ﻿using Automations.Components;
 using Automations.Systems;
-using Simulation;
 using Simulation.Tests;
 using System;
 using System.Numerics;
@@ -10,29 +9,58 @@ namespace Automations.Tests
 {
     public class AutomationTests : SimulationTests
     {
+        static AutomationTests()
+        {
+            TypeLayout.Register<IsAutomation>("IsAutomation");
+            TypeLayout.Register<IsStateful>("IsStateful");
+            TypeLayout.Register<IsStateMachine>("IsStateMachine");
+            TypeLayout.Register<IsAutomationPlayer>("IsAutomationPlayer");
+            TypeLayout.Register<Position>("Position");
+            TypeLayout.Register<AvailableState>("AvailableState");
+            TypeLayout.Register<Transition>("Transition");
+            TypeLayout.Register<Parameter>("Parameter");
+            TypeLayout.Register<StateAutomationLink>("StateAutomationLink");
+            TypeLayout.Register<KeyframeTime>("KeyframeTime");
+            TypeLayout.Register<KeyframeValue1>("KeyframeValue1");
+            TypeLayout.Register<KeyframeValue2>("KeyframeValue2");
+            TypeLayout.Register<KeyframeValue4>("KeyframeValue4");
+            TypeLayout.Register<KeyframeValue8>("KeyframeValue8");
+            TypeLayout.Register<KeyframeValue16>("KeyframeValue16");
+            TypeLayout.Register<KeyframeValue32>("KeyframeValue32");
+            TypeLayout.Register<KeyframeValue64>("KeyframeValue64");
+            TypeLayout.Register<KeyframeValue128>("KeyframeValue128");
+            TypeLayout.Register<KeyframeValue256>("KeyframeValue256");
+        }
+
         protected override void SetUp()
         {
             base.SetUp();
-            ComponentType.Register<IsAutomation>();
-            ComponentType.Register<IsAutomationPlayer>();
-            ComponentType.Register<Position>();
-            ArrayType.Register<KeyframeTime>();
-            ArrayType.Register<KeyframeValue1>();
-            ArrayType.Register<KeyframeValue2>();
-            ArrayType.Register<KeyframeValue4>();
-            ArrayType.Register<KeyframeValue8>();
-            ArrayType.Register<KeyframeValue16>();
-            ArrayType.Register<KeyframeValue32>();
-            ArrayType.Register<KeyframeValue64>();
-            ArrayType.Register<KeyframeValue128>();
-            ArrayType.Register<KeyframeValue256>();
-            Simulator.AddSystem<AutomationPlayingSystem>();
+            world.Schema.RegisterComponent<IsAutomation>();
+            world.Schema.RegisterComponent<IsStateful>();
+            world.Schema.RegisterComponent<IsStateMachine>();
+            world.Schema.RegisterComponent<IsAutomationPlayer>();
+            world.Schema.RegisterComponent<Position>();
+            world.Schema.RegisterArrayElement<AvailableState>();
+            world.Schema.RegisterArrayElement<Transition>();
+            world.Schema.RegisterArrayElement<Parameter>();
+            world.Schema.RegisterArrayElement<StateAutomationLink>();
+            world.Schema.RegisterArrayElement<KeyframeTime>();
+            world.Schema.RegisterArrayElement<KeyframeValue1>();
+            world.Schema.RegisterArrayElement<KeyframeValue2>();
+            world.Schema.RegisterArrayElement<KeyframeValue4>();
+            world.Schema.RegisterArrayElement<KeyframeValue8>();
+            world.Schema.RegisterArrayElement<KeyframeValue16>();
+            world.Schema.RegisterArrayElement<KeyframeValue32>();
+            world.Schema.RegisterArrayElement<KeyframeValue64>();
+            world.Schema.RegisterArrayElement<KeyframeValue128>();
+            world.Schema.RegisterArrayElement<KeyframeValue256>();
+            simulator.AddSystem<AutomationPlayingSystem>();
         }
 
         [Test]
         public void CreateAutomationWithKeyframes()
         {
-            Automation<Vector3> testAutomation = new(World,
+            Automation<Vector3> testAutomation = new(world,
             [
                 (0, Vector3.Zero),
                 (1f, Vector3.UnitX),
@@ -57,7 +85,7 @@ namespace Automations.Tests
         [Test]
         public void MoveTransformAutomation()
         {
-            Automation<Vector3> testAutomation = new(World, InterpolationMethod.Vector3Linear,
+            Automation<Vector3> testAutomation = new(world, InterpolationMethod.Vector3Linear,
             [
                 (0, Vector3.Zero),
                 (1f, Vector3.UnitX),
@@ -66,9 +94,9 @@ namespace Automations.Tests
                 (4f, Vector3.One),
             ]);
 
-            Entity thingToMove = new(World);
+            Entity thingToMove = new(world);
             thingToMove.AddComponent<Position>();
-            
+
             AutomationPlayer thingPlayer = thingToMove.Become<AutomationPlayer>();
             thingPlayer.SetAutomation<Position>(testAutomation);
             thingPlayer.Play();
@@ -77,7 +105,7 @@ namespace Automations.Tests
             TimeSpan time = TimeSpan.Zero;
             while (time < TimeSpan.FromSeconds(5f))
             {
-                Simulator.Update(delta);
+                simulator.Update(delta);
                 time += delta;
                 Vector3 currentPosition = thingToMove.GetComponent<Position>().value;
                 Console.WriteLine(currentPosition);

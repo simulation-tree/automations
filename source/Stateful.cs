@@ -57,7 +57,11 @@ namespace Automations
 
         readonly uint IEntity.Value => entity.value;
         readonly World IEntity.World => entity.world;
-        readonly Definition IEntity.Definition => new Definition().AddComponentType<IsStateful>().AddArrayType<Parameter>();
+
+        readonly Definition IEntity.GetDefinition(Schema schema)
+        {
+            return new Definition().AddComponentType<IsStateful>(schema).AddArrayType<Parameter>(schema);
+        }
 
 #if NET
         [Obsolete("Default constructor not available", true)]

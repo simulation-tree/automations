@@ -43,7 +43,11 @@ namespace Automations
 
         readonly uint IEntity.Value => entity.GetEntityValue();
         readonly World IEntity.World => entity.GetWorld();
-        readonly Definition IEntity.Definition => new Definition().AddComponentType<IsStateMachine>().AddArrayTypes<AvailableState, Transition>();
+
+        readonly Definition IEntity.GetDefinition(Schema schema)
+        {
+            return new Definition().AddComponentType<IsStateMachine>(schema).AddArrayTypes<AvailableState, Transition>(schema);
+        }
 
 #if NET
         [Obsolete("Default constructor not available", true)]

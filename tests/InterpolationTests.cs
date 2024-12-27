@@ -1,41 +1,19 @@
-﻿using Automations.Components;
-using Automations.Systems;
-using Simulation.Tests;
-using System;
+﻿using System;
 using System.Numerics;
 using Unmanaged;
 using Worlds;
 
 namespace Automations.Tests
 {
-    public class InterpolationTests : SimulationTests
+    public class InterpolationTests : AutomationTests
     {
-        protected override void SetUp()
-        {
-            base.SetUp();
-            ComponentType.Register<IsAutomation>();
-            ComponentType.Register<IsAutomationPlayer>();
-            ComponentType.Register<FixedString>();
-            ArrayType.Register<KeyframeTime>();
-            ArrayType.Register<KeyframeValue1>();
-            ArrayType.Register<KeyframeValue2>();
-            ArrayType.Register<KeyframeValue4>();
-            ArrayType.Register<KeyframeValue8>();
-            ArrayType.Register<KeyframeValue16>();
-            ArrayType.Register<KeyframeValue32>();
-            ArrayType.Register<KeyframeValue64>();
-            ArrayType.Register<KeyframeValue128>();
-            ArrayType.Register<KeyframeValue256>();
-            Simulator.AddSystem<AutomationPlayingSystem>();
-        }
-
         [Test]
         public void VerifyHold()
         {
-            Entity entity = new(World);
+            Entity entity = new(world);
             entity.AddComponent<FixedString>();
 
-            Automation<FixedString> animation = new(World);
+            Automation<FixedString> animation = new(world);
             animation.AddKeyframe(0f, "this");
             animation.AddKeyframe(1f, "is");
             animation.AddKeyframe(2f, "sum");
@@ -47,31 +25,31 @@ namespace Automations.Tests
 
             Assert.That(animation.Count, Is.EqualTo(4));
 
-            Simulator.Update(TimeSpan.FromSeconds(0f));
+            simulator.Update(TimeSpan.FromSeconds(0f));
 
             Assert.That(entity.GetComponent<FixedString>().ToString(), Is.EqualTo("this"));
 
-            Simulator.Update(TimeSpan.FromSeconds(0.5f));
+            simulator.Update(TimeSpan.FromSeconds(0.5f));
 
             Assert.That(entity.GetComponent<FixedString>().ToString(), Is.EqualTo("this"));
 
-            Simulator.Update(TimeSpan.FromSeconds(0.5f));
+            simulator.Update(TimeSpan.FromSeconds(0.5f));
 
             Assert.That(entity.GetComponent<FixedString>().ToString(), Is.EqualTo("is"));
 
-            Simulator.Update(TimeSpan.FromSeconds(1f));
+            simulator.Update(TimeSpan.FromSeconds(1f));
 
             Assert.That(entity.GetComponent<FixedString>().ToString(), Is.EqualTo("sum"));
 
-            Simulator.Update(TimeSpan.FromSeconds(0.1f));
+            simulator.Update(TimeSpan.FromSeconds(0.1f));
 
             Assert.That(entity.GetComponent<FixedString>().ToString(), Is.EqualTo("sum"));
 
-            Simulator.Update(TimeSpan.FromSeconds(0.9f));
+            simulator.Update(TimeSpan.FromSeconds(0.9f));
 
             Assert.That(entity.GetComponent<FixedString>().ToString(), Is.EqualTo("text"));
 
-            Simulator.Update(TimeSpan.FromSeconds(0.5f));
+            simulator.Update(TimeSpan.FromSeconds(0.5f));
 
             Assert.That(entity.GetComponent<FixedString>().ToString(), Is.EqualTo("text"));
         }
