@@ -71,7 +71,7 @@ namespace Automations.Systems
                 return;
             }
 
-            ushort keyframeSize = world.Schema.GetArrayElementSize(keyframeType);
+            ushort keyframeSize = world.Schema.GetSize(keyframeType);
             float timeInSeconds = (float)time.TotalSeconds;
             float finalKeyframeTime = keyframeTimes[keyframeCount - 1];
             if (timeInSeconds >= finalKeyframeTime)
@@ -124,7 +124,7 @@ namespace Automations.Systems
                 timeProgress = 0f;
             }
 
-            ushort componentSize = world.Schema.GetComponentSize(componentType);
+            ushort componentSize = world.Schema.GetSize(componentType);
             if (automationComponent.interpolationMethod == default)
             {
                 void* component = world.GetComponent(playerEntity, componentType);
