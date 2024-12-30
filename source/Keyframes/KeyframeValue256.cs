@@ -3,7 +3,7 @@ using Worlds;
 
 namespace Automations
 {
-    [Array]
+    [ArrayElement]
     public struct KeyframeValue256
     {
         public KeyframeValue128 a;

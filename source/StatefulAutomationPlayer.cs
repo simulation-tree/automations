@@ -37,7 +37,7 @@ namespace Automations
 
         readonly Definition IEntity.GetDefinition(Schema schema)
         {
-            return new Definition().AddComponentTypes<IsStateful, IsAutomationPlayer>(schema).AddArrayTypes<Parameter, StateAutomationLink>(schema);
+            return new Definition().AddComponentTypes<IsStateful, IsAutomationPlayer>(schema).AddArrayElementTypes<Parameter, StateAutomationLink>(schema);
         }
 
 #if NET

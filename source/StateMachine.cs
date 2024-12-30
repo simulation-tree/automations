@@ -46,7 +46,7 @@ namespace Automations
 
         readonly Definition IEntity.GetDefinition(Schema schema)
         {
-            return new Definition().AddComponentType<IsStateMachine>(schema).AddArrayTypes<AvailableState, Transition>(schema);
+            return new Definition().AddComponentType<IsStateMachine>(schema).AddArrayElementTypes<AvailableState, Transition>(schema);
         }
 
 #if NET

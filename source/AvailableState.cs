@@ -4,7 +4,7 @@ using Worlds;
 
 namespace Automations
 {
-    [Array]
+    [ArrayElement]
     public struct AvailableState
     {
         public FixedString name;

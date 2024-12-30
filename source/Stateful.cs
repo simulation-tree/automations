@@ -60,7 +60,7 @@ namespace Automations
 
         readonly Definition IEntity.GetDefinition(Schema schema)
         {
-            return new Definition().AddComponentType<IsStateful>(schema).AddArrayType<Parameter>(schema);
+            return new Definition().AddComponentType<IsStateful>(schema).AddArrayElementType<Parameter>(schema);
         }
 
 #if NET
