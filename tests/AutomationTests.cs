@@ -11,25 +11,25 @@ namespace Automations.Tests
     {
         static AutomationTests()
         {
-            TypeLayout.Register<IsAutomation>("IsAutomation");
-            TypeLayout.Register<IsStateful>("IsStateful");
-            TypeLayout.Register<IsStateMachine>("IsStateMachine");
-            TypeLayout.Register<IsAutomationPlayer>("IsAutomationPlayer");
-            TypeLayout.Register<Position>("Position");
-            TypeLayout.Register<AvailableState>("AvailableState");
-            TypeLayout.Register<Transition>("Transition");
-            TypeLayout.Register<Parameter>("Parameter");
-            TypeLayout.Register<StateAutomationLink>("StateAutomationLink");
-            TypeLayout.Register<KeyframeTime>("KeyframeTime");
-            TypeLayout.Register<KeyframeValue1>("KeyframeValue1");
-            TypeLayout.Register<KeyframeValue2>("KeyframeValue2");
-            TypeLayout.Register<KeyframeValue4>("KeyframeValue4");
-            TypeLayout.Register<KeyframeValue8>("KeyframeValue8");
-            TypeLayout.Register<KeyframeValue16>("KeyframeValue16");
-            TypeLayout.Register<KeyframeValue32>("KeyframeValue32");
-            TypeLayout.Register<KeyframeValue64>("KeyframeValue64");
-            TypeLayout.Register<KeyframeValue128>("KeyframeValue128");
-            TypeLayout.Register<KeyframeValue256>("KeyframeValue256");
+            TypeLayout.Register<IsAutomation>();
+            TypeLayout.Register<IsStateful>();
+            TypeLayout.Register<IsStateMachine>();
+            TypeLayout.Register<IsAutomationPlayer>();
+            TypeLayout.Register<Position>();
+            TypeLayout.Register<AvailableState>();
+            TypeLayout.Register<Transition>();
+            TypeLayout.Register<Parameter>();
+            TypeLayout.Register<StateAutomationLink>();
+            TypeLayout.Register<KeyframeTime>();
+            TypeLayout.Register<KeyframeValue1>();
+            TypeLayout.Register<KeyframeValue2>();
+            TypeLayout.Register<KeyframeValue4>();
+            TypeLayout.Register<KeyframeValue8>();
+            TypeLayout.Register<KeyframeValue16>();
+            TypeLayout.Register<KeyframeValue32>();
+            TypeLayout.Register<KeyframeValue64>();
+            TypeLayout.Register<KeyframeValue128>();
+            TypeLayout.Register<KeyframeValue256>();
         }
 
         protected override void SetUp()
