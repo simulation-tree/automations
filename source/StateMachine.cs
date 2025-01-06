@@ -44,9 +44,11 @@ namespace Automations
         readonly uint IEntity.Value => entity.GetEntityValue();
         readonly World IEntity.World => entity.GetWorld();
 
-        readonly Definition IEntity.GetDefinition(Schema schema)
+        readonly void IEntity.Describe(ref Archetype archetype)
         {
-            return new Definition().AddComponentType<IsStateMachine>(schema).AddArrayElementTypes<AvailableState, Transition>(schema);
+            archetype.AddComponentType<IsStateMachine>();
+            archetype.AddArrayElementType<AvailableState>();
+            archetype.AddArrayElementType<Transition>();
         }
 
 #if NET

@@ -18,9 +18,10 @@ namespace Automations
         readonly uint IEntity.Value => entity.value;
         readonly World IEntity.World => entity.world;
 
-        readonly Definition IEntity.GetDefinition(Schema schema)
+        readonly void IEntity.Describe(ref Archetype archetype)
         {
-            return new Definition().AddComponentType<IsAutomation>(schema).AddArrayElementType<KeyframeTime>(schema);
+            archetype.AddComponentType<IsAutomation>();
+            archetype.AddArrayElementType<KeyframeTime>();
         }
 
 #if NET
@@ -112,9 +113,11 @@ namespace Automations
         readonly uint IEntity.Value => automation.GetEntityValue();
         readonly World IEntity.World => automation.GetWorld();
 
-        readonly Definition IEntity.GetDefinition(Schema schema)
+        readonly void IEntity.Describe(ref Archetype archetype)
         {
-            return new Definition().AddComponentType<IsAutomation>(schema).AddArrayElementType(Automation.GetKeyframeType<T>(schema)).AddArrayElementType<KeyframeTime>(schema);
+            archetype.AddComponentType<IsAutomation>();
+            archetype.AddArrayElementType(Automation.GetKeyframeType<T>(archetype.schema));
+            archetype.AddArrayElementType<KeyframeTime>();
         }
 
 #if NET

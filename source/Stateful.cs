@@ -58,9 +58,10 @@ namespace Automations
         readonly uint IEntity.Value => entity.value;
         readonly World IEntity.World => entity.world;
 
-        readonly Definition IEntity.GetDefinition(Schema schema)
+        readonly void IEntity.Describe(ref Archetype archetype)
         {
-            return new Definition().AddComponentType<IsStateful>(schema).AddArrayElementType<Parameter>(schema);
+            archetype.AddComponentType<IsStateful>();
+            archetype.AddArrayElementType<Parameter>();
         }
 
 #if NET
