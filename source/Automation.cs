@@ -50,22 +50,22 @@ namespace Automations
         /// <summary>
         /// Retrieves the type for the keyframe that can store the given type.
         /// </summary>
-        public static ArrayElementType GetKeyframeType<T>(Schema schema) where T : unmanaged
+        public static DataType GetKeyframeType<T>(Schema schema) where T : unmanaged
         {
             uint size = TypeInfo<T>.size;
             uint containingSize = Allocations.GetNextPowerOf2(size - 1);
             uint index = Allocations.GetIndexOfPowerOf2(containingSize);
             return index switch
             {
-                0 => schema.GetArrayElement<KeyframeValue1>(),
-                1 => schema.GetArrayElement<KeyframeValue2>(),
-                2 => schema.GetArrayElement<KeyframeValue4>(),
-                3 => schema.GetArrayElement<KeyframeValue8>(),
-                4 => schema.GetArrayElement<KeyframeValue16>(),
-                5 => schema.GetArrayElement<KeyframeValue32>(),
-                6 => schema.GetArrayElement<KeyframeValue64>(),
-                7 => schema.GetArrayElement<KeyframeValue128>(),
-                8 => schema.GetArrayElement<KeyframeValue256>(),
+                0 => schema.GetArrayElementDataType<KeyframeValue1>(),
+                1 => schema.GetArrayElementDataType<KeyframeValue2>(),
+                2 => schema.GetArrayElementDataType<KeyframeValue4>(),
+                3 => schema.GetArrayElementDataType<KeyframeValue8>(),
+                4 => schema.GetArrayElementDataType<KeyframeValue16>(),
+                5 => schema.GetArrayElementDataType<KeyframeValue32>(),
+                6 => schema.GetArrayElementDataType<KeyframeValue64>(),
+                7 => schema.GetArrayElementDataType<KeyframeValue128>(),
+                8 => schema.GetArrayElementDataType<KeyframeValue256>(),
                 _ => throw new NotSupportedException($"Keyframe value type `{typeof(T)}` is greater than the maximum 256")
             };
         }
@@ -132,7 +132,7 @@ namespace Automations
         /// </summary>
         public Automation(World world, InterpolationMethod interpolationMethod, bool loop = false)
         {
-            ArrayElementType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity();
             world.AddComponent(entity, new IsAutomation(keyframeType, interpolationMethod, loop));
             world.CreateArray(entity, keyframeType);
@@ -145,7 +145,7 @@ namespace Automations
         /// </summary>
         public Automation(World world, bool loop = false)
         {
-            ArrayElementType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity();
             world.AddComponent(entity, new IsAutomation(keyframeType, default, loop));
             world.CreateArray(entity, keyframeType);
@@ -160,7 +160,7 @@ namespace Automations
                 throw new ArgumentException($"Values and times given to {nameof(Automation)} constructor must be the same length");
             }
 
-            ArrayElementType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity();
             world.AddComponent(entity, new IsAutomation(keyframeType, interpolationMethod, loop));
             Allocation keyframeValues = world.CreateArray(entity, keyframeType, values.Length);
@@ -181,7 +181,7 @@ namespace Automations
                 throw new ArgumentException($"Values and times given to {nameof(Automation)} constructor must be the same length");
             }
 
-            ArrayElementType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity();
             world.AddComponent(entity, new IsAutomation(keyframeType, default, loop));
             Allocation keyframeValues = world.CreateArray(entity, keyframeType, values.Length);
@@ -197,7 +197,7 @@ namespace Automations
 
         public unsafe Automation(World world, InterpolationMethod interpolationMethod, USpan<(float time, T value)> keyframes, bool loop = false)
         {
-            ArrayElementType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity();
             world.AddComponent(entity, new IsAutomation(keyframeType, interpolationMethod, loop));
             Allocation values = world.CreateArray(entity, keyframeType, keyframes.Length);
@@ -214,7 +214,7 @@ namespace Automations
 
         public unsafe Automation(World world, USpan<(float time, T value)> keyframes, bool loop = false)
         {
-            ArrayElementType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity();
             world.AddComponent(entity, new IsAutomation(keyframeType, default, loop));
             Allocation values = world.CreateArray(entity, keyframeType, keyframes.Length);
@@ -236,7 +236,7 @@ namespace Automations
 
         public readonly void AddKeyframe(float time, T value)
         {
-            ArrayElementType keyframeType = Automation.GetKeyframeType<T>(automation.GetWorld().Schema);
+            DataType keyframeType = Automation.GetKeyframeType<T>(automation.GetWorld().Schema);
             ref IsAutomation component = ref automation.AsEntity().GetComponent<IsAutomation>();
             component.keyframeType = keyframeType;
 

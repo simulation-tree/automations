@@ -41,7 +41,9 @@ namespace Automations.Systems
                 {
                     player.time += delta;
                     uint automationEntity = world.GetReference(entity, player.automationReference);
-                    Evaluate(world, entity, player.componentType, automationEntity, player.time);
+                    ComponentType componentType = player.componentType;
+                    ushort componentSize = player.componentType.Size;
+                    Evaluate(world, entity, componentType, componentSize, automationEntity, player.time);
                 }
             }
         }
@@ -60,10 +62,10 @@ namespace Automations.Systems
             return new((byte)interpolationFunctions.Count);
         }
 
-        private readonly unsafe void Evaluate(World world, uint playerEntity, ComponentType componentType, uint automationEntity, TimeSpan time)
+        private readonly unsafe void Evaluate(World world, uint playerEntity, ComponentType componentType, ushort componentSize, uint automationEntity, TimeSpan time)
         {
             IsAutomation automationComponent = world.GetComponent<IsAutomation>(automationEntity);
-            ArrayElementType keyframeType = automationComponent.keyframeType;
+            DataType keyframeType = automationComponent.keyframeType;
             Allocation keyframeValues = world.GetArray(automationEntity, keyframeType, out uint keyframeCount);
             USpan<float> keyframeTimes = world.GetArray<KeyframeTime>(automationEntity).As<float>();
             if (keyframeCount == 0)
@@ -71,7 +73,7 @@ namespace Automations.Systems
                 return;
             }
 
-            ushort keyframeSize = world.Schema.GetSize(keyframeType);
+            ushort keyframeSize = keyframeType.Size;
             float timeInSeconds = (float)time.TotalSeconds;
             float finalKeyframeTime = keyframeTimes[keyframeCount - 1];
             if (timeInSeconds >= finalKeyframeTime)
@@ -124,7 +126,6 @@ namespace Automations.Systems
                 timeProgress = 0f;
             }
 
-            ushort componentSize = world.Schema.GetSize(componentType);
             if (automationComponent.interpolationMethod == default)
             {
                 void* component = world.GetComponent(playerEntity, componentType);

@@ -11,7 +11,8 @@ namespace Automations.Components
         /// <summary>
         /// The type of component on this entity being automated.
         /// </summary>
-        public ComponentType componentType;
+        public DataType componentType;
+
         public TimeSpan time;
         public bool paused;
 
@@ -23,7 +24,7 @@ namespace Automations.Components
         }
 #endif
 
-        public IsAutomationPlayer(rint automationReference, ComponentType componentType)
+        public IsAutomationPlayer(rint automationReference, DataType componentType)
         {
             this.automationReference = automationReference;
             this.componentType = componentType;

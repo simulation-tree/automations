@@ -104,7 +104,7 @@ namespace Automations
             StateMachine.ThrowIfStateIsMissing(stateName);
             int stateNameHash = stateName.GetHashCode();
             USpan<StateAutomationLink> links = entity.GetArray<StateAutomationLink>();
-            ComponentType componentType = entity.GetWorld().Schema.GetComponent<T>();
+            DataType componentType = entity.GetWorld().Schema.GetComponentDataType<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
             {

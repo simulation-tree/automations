@@ -6,7 +6,7 @@ namespace Automations.Components
     [Component]
     public struct IsAutomation
     {
-        public ArrayElementType keyframeType;
+        public DataType keyframeType;
         public InterpolationMethod interpolationMethod;
         public bool loop;
 
@@ -18,7 +18,7 @@ namespace Automations.Components
         }
 #endif
 
-        public IsAutomation(ArrayElementType keyframeType, InterpolationMethod interpolationMethod, bool loop)
+        public IsAutomation(DataType keyframeType, InterpolationMethod interpolationMethod, bool loop)
         {
             this.keyframeType = keyframeType;
             this.interpolationMethod = interpolationMethod;

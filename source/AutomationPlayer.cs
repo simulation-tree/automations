@@ -10,7 +10,7 @@ namespace Automations
 
         public readonly ref bool IsPaused => ref entity.GetComponent<IsAutomationPlayer>().paused;
         public readonly ref TimeSpan Time => ref entity.GetComponent<IsAutomationPlayer>().time;
-        public readonly ref ComponentType ComponentType => ref entity.GetComponent<IsAutomationPlayer>().componentType;
+        public readonly ref DataType ComponentType => ref entity.GetComponent<IsAutomationPlayer>().componentType;
 
         public readonly Automation CurrentAutomation
         {
@@ -48,7 +48,7 @@ namespace Automations
         {
             ref IsAutomationPlayer player = ref entity.GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
-            player.componentType = entity.GetWorld().Schema.GetComponent<T>();
+            player.componentType = entity.GetWorld().Schema.GetComponentDataType<T>();
             if (player.automationReference != default)
             {
                 entity.SetReference(player.automationReference, automation);
