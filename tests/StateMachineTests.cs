@@ -21,11 +21,19 @@ namespace Automations.Tests
             Assert.That(simulator.ContainsSystem<AutomationPlayingSystem>(), Is.True);
         }
 
+#if DEBUG
+        [Test]
+        public void ThrowWhenReadingStateBeforeInitializing()
+        {
+            StateMachine machine = new(world);
+            Assert.Throws<InvalidOperationException>(() => Console.WriteLine(machine.EntryState));
+        }
+#endif
+
         [Test]
         public void SimpleStateMachine()
         {
             StateMachine machine = new(world);
-            Assert.Throws<InvalidOperationException>(() => Console.WriteLine(machine.EntryState));
 
             machine.AddState("Entry State");
             machine.AddState("Other State");
