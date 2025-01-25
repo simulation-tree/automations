@@ -8,6 +8,10 @@
 		<IsAotCompatible>True</IsAotCompatible>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<WarningLevel>8</WarningLevel>
+		<Title>Automations</Title>
+		<Authors>popcron</Authors>
+		<Company>game-simulations</Company>
+		<RepositoryUrl>https://github.com/game-simulations/automations</RepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
