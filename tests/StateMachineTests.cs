@@ -6,13 +6,6 @@ namespace Automations.Tests
 {
     public class StateMachineTests : AutomationTests
     {
-        protected override void SetUp()
-        {
-            base.SetUp();
-            simulator.InsertSystem<StateAutomationSystem>(0);
-            simulator.InsertSystem<StateMachineSystem>(0);
-        }
-
         [Test]
         public void AddingSystems()
         {
