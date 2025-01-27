@@ -72,11 +72,6 @@ namespace Automations
         }
 #endif
 
-        public Stateful(World world, uint existingEntity)
-        {
-            entity = new(world, existingEntity);
-        }
-
         /// <summary>
         /// Creates a new stateful entity initialized to the
         /// entry state of the assigned state machine.
