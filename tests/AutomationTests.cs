@@ -9,15 +9,15 @@ namespace Automations.Tests
     {
         static AutomationTests()
         {
-            TypeRegistry.Load<Automations.TypeBank>();
-            TypeRegistry.Load<Automations.Tests.TypeBank>();
+            TypeRegistry.Load<AutomationsTypeBank>();
+            TypeRegistry.Load<AutomationsTestsTypeBank>();
         }
 
         protected override Schema CreateSchema()
         {
             Schema schema = base.CreateSchema();
-            schema.Load<Automations.SchemaBank>();
-            schema.Load<Automations.Tests.SchemaBank>();
+            schema.Load<AutomationsSchemaBank>();
+            schema.Load<AutomationsTestsSchemaBank>();
             return schema;
         }
 
