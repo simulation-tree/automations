@@ -6,12 +6,11 @@ using Worlds;
 
 namespace Automations
 {
-    public readonly struct StateMachine : IEntity
+    public readonly partial struct StateMachine : IEntity
     {
-        private readonly Entity entity;
-
-        public readonly USpan<AvailableState> AvailableStates => entity.GetArray<AvailableState>();
-        public readonly USpan<Transition> Transitions => entity.GetArray<Transition>();
+        public readonly USpan<AvailableState> AvailableStates => GetArray<AvailableState>();
+        public readonly USpan<Transition> Transitions => GetArray<Transition>();
+        public readonly uint EntryStateIndex => GetComponent<IsStateMachine>().entryState;
 
         public readonly FixedString EntryState
         {
@@ -20,7 +19,7 @@ namespace Automations
                 ThrowIfNoStatesAvailable();
                 ThrowIfEntryStateIsUnassigned();
 
-                ref IsStateMachine stateMachine = ref entity.GetComponent<IsStateMachine>();
+                ref IsStateMachine stateMachine = ref GetComponent<IsStateMachine>();
                 AvailableState state = AvailableStates[stateMachine.entryState - 1];
                 return state.name;
             }
@@ -28,7 +27,7 @@ namespace Automations
             {
                 ThrowIfStateIsMissing(value);
 
-                ref IsStateMachine stateMachine = ref entity.GetComponent<IsStateMachine>();
+                ref IsStateMachine stateMachine = ref GetComponent<IsStateMachine>();
                 USpan<AvailableState> states = AvailableStates;
                 for (uint index = 0; index < states.Length; index++)
                 {
@@ -41,33 +40,23 @@ namespace Automations
             }
         }
 
-        readonly uint IEntity.Value => entity.GetEntityValue();
-        readonly World IEntity.World => entity.GetWorld();
-
         readonly void IEntity.Describe(ref Archetype archetype)
         {
             archetype.AddComponentType<IsStateMachine>();
-            archetype.AddArrayElementType<AvailableState>();
-            archetype.AddArrayElementType<Transition>();
+            archetype.AddArrayType<AvailableState>();
+            archetype.AddArrayType<Transition>();
         }
 
-#if NET
-        [Obsolete("Default constructor not available", true)]
-        public StateMachine()
-        {
-            throw new NotSupportedException();
-        }
-#endif
         /// <summary>
         /// Creates an empty uninitialized state machine
         /// with no states available.
         /// </summary>
         public StateMachine(World world)
         {
-            entity = new(world);
-            entity.AddComponent(new IsStateMachine(0));
-            entity.CreateArray<AvailableState>(0);
-            entity.CreateArray<Transition>(0);
+            this.world = world;
+            value = world.CreateEntity(new IsStateMachine(0));
+            CreateArray<AvailableState>(0);
+            CreateArray<Transition>(0);
         }
 
         /// <summary>
@@ -78,23 +67,19 @@ namespace Automations
         /// </summary>
         public StateMachine(World world, USpan<AvailableState> states, USpan<Transition> transitions, uint entryState = 1)
         {
-            entity = new(world);
-            entity.AddComponent(new IsStateMachine(entryState));
-            entity.CreateArray(states);
-            entity.CreateArray(transitions);
-        }
-
-        public readonly void Dispose()
-        {
-            entity.Dispose();
+            this.world = world;
+            value = world.CreateEntity(new IsStateMachine(entryState));
+            CreateArray(states);
+            CreateArray(transitions);
         }
 
         public readonly void AddTransition(FixedString sourceState, FixedString destinationState, FixedString parameter, Transition.Condition condition, float value)
         {
             ThrowIfTransitionAlreadyExists(sourceState, destinationState, parameter);
+
             USpan<Transition> transitions = Transitions;
             uint transitionCount = transitions.Length;
-            transitions = entity.ResizeArray<Transition>(transitionCount + 1);
+            transitions = ResizeArray<Transition>(transitionCount + 1);
             transitions[transitionCount] = new(sourceState, destinationState, parameter, condition, value);
         }
 
@@ -137,8 +122,9 @@ namespace Automations
         public readonly void AddState(FixedString name)
         {
             ThrowIfAvailableStateAlreadyExists(name);
+
             uint availableStateCount = AvailableStates.Length;
-            USpan<AvailableState> availableStates = entity.ResizeArray<AvailableState>(availableStateCount + 1);
+            USpan<AvailableState> availableStates = ResizeArray<AvailableState>(availableStateCount + 1);
             availableStates[availableStateCount] = new(name);
         }
 
@@ -202,23 +188,18 @@ namespace Automations
         {
             if (AvailableStates.Length == 0)
             {
-                throw new InvalidOperationException($"No states available on state machine `{entity}`");
+                throw new InvalidOperationException($"No states available on state machine `{value}`");
             }
         }
 
         [Conditional("DEBUG")]
         public readonly void ThrowIfEntryStateIsUnassigned()
         {
-            ref IsStateMachine stateMachine = ref entity.GetComponent<IsStateMachine>();
+            ref IsStateMachine stateMachine = ref GetComponent<IsStateMachine>();
             if (stateMachine.entryState == default)
             {
-                throw new InvalidOperationException($"State machine `{entity}` has no entry state unassigned");
+                throw new InvalidOperationException($"State machine `{value}` has no entry state unassigned");
             }
-        }
-
-        public static implicit operator Entity(StateMachine stateMachine)
-        {
-            return stateMachine.entity;
         }
     }
 }

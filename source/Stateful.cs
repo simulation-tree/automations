@@ -6,35 +6,33 @@ using Worlds;
 
 namespace Automations
 {
-    public readonly struct Stateful : IEntity
+    public readonly partial struct Stateful : IEntity
     {
-        private readonly Entity entity;
-
-        public readonly USpan<Parameter> Parameters => entity.GetArray<Parameter>();
+        public readonly USpan<Parameter> Parameters => GetArray<Parameter>();
 
         public readonly StateMachine StateMachine
         {
             get
             {
-                rint stateMachineReference = entity.GetComponent<IsStateful>().stateMachineReference;
-                uint stateMachineEntity = entity.GetReference(stateMachineReference);
-                return new Entity(entity.GetWorld(), stateMachineEntity).As<StateMachine>();
+                rint stateMachineReference = GetComponent<IsStateful>().stateMachineReference;
+                uint stateMachineEntity = GetReference(stateMachineReference);
+                return new Entity(world, stateMachineEntity).As<StateMachine>();
             }
             set
             {
-                ref IsStateful component = ref entity.GetComponent<IsStateful>();
+                ref IsStateful component = ref GetComponent<IsStateful>();
                 if (component.stateMachineReference == default)
                 {
-                    component.stateMachineReference = entity.AddReference(value);
+                    component.stateMachineReference = AddReference(value);
                     component.state = value.AsEntity().GetComponent<IsStateMachine>().entryState;
                 }
                 else
                 {
-                    uint stateMachineEntity = entity.GetReference(component.stateMachineReference);
-                    if (stateMachineEntity != value.GetEntityValue())
+                    uint stateMachineEntity = GetReference(component.stateMachineReference);
+                    if (stateMachineEntity != value.value)
                     {
-                        entity.SetReference(component.stateMachineReference, value);
-                        component.state = value.AsEntity().GetComponent<IsStateMachine>().entryState;
+                        SetReference(component.stateMachineReference, value);
+                        component.state = value.GetComponent<IsStateMachine>().entryState;
                     }
                     else
                     {
@@ -49,28 +47,12 @@ namespace Automations
             get
             {
                 ThrowIfStateIsUnassigned();
-                ref IsStateful isStateful = ref entity.GetComponent<IsStateful>();
+
+                ref IsStateful isStateful = ref GetComponent<IsStateful>();
                 AvailableState state = StateMachine.AvailableStates[isStateful.state - 1];
                 return state.name;
             }
         }
-
-        readonly uint IEntity.Value => entity.value;
-        readonly World IEntity.World => entity.world;
-
-        readonly void IEntity.Describe(ref Archetype archetype)
-        {
-            archetype.AddComponentType<IsStateful>();
-            archetype.AddArrayElementType<Parameter>();
-        }
-
-#if NET
-        [Obsolete("Default constructor not available", true)]
-        public Stateful()
-        {
-            throw new NotSupportedException();
-        }
-#endif
 
         /// <summary>
         /// Creates a new stateful entity initialized to the
@@ -78,23 +60,24 @@ namespace Automations
         /// </summary>
         public Stateful(World world, StateMachine stateMachine)
         {
-            entity = new(world);
-            entity.CreateArray<Parameter>(0);
-            uint state = stateMachine.AsEntity().GetComponent<IsStateMachine>().entryState;
-            rint stateMachineReference = entity.AddReference(stateMachine);
-            entity.AddComponent(new IsStateful(state, stateMachineReference));
+            this.world = world;
+            value = world.CreateEntity(new IsStateful(stateMachine.EntryStateIndex, (rint)1));
+            CreateArray<Parameter>(0);
+            AddReference(stateMachine);
         }
 
-        public readonly void Dispose()
+        readonly void IEntity.Describe(ref Archetype archetype)
         {
-            entity.Dispose();
+            archetype.AddComponentType<IsStateful>();
+            archetype.AddArrayType<Parameter>();
         }
 
         public readonly ref float AddParameter(FixedString name, float defaultValue = 0f)
         {
             ThrowIfParameterAlreadyExists(name);
-            uint parameterCount = entity.GetArrayLength<Parameter>();
-            USpan<Parameter> parameters = entity.ResizeArray<Parameter>(parameterCount + 1);
+
+            uint parameterCount = GetArrayLength<Parameter>();
+            USpan<Parameter> parameters = ResizeArray<Parameter>(parameterCount + 1);
             ref Parameter newParameter = ref parameters[parameterCount];
             newParameter.name = name;
             newParameter.value = defaultValue;
@@ -148,7 +131,7 @@ namespace Automations
                 }
             }
 
-            parameters = entity.ResizeArray<Parameter>(count + 1);
+            parameters = ResizeArray<Parameter>(count + 1);
             ref Parameter newParameter = ref parameters[count];
             newParameter.name = name;
             newParameter.value = value;
@@ -166,16 +149,11 @@ namespace Automations
         [Conditional("DEBUG")]
         public readonly void ThrowIfStateIsUnassigned()
         {
-            ref IsStateful isStateful = ref entity.GetComponent<IsStateful>();
+            ref IsStateful isStateful = ref GetComponent<IsStateful>();
             if (isStateful.state == default)
             {
-                throw new InvalidOperationException($"Stateful entity `{entity}` has no assigned state");
+                throw new InvalidOperationException($"Stateful entity `{value}` has no assigned state");
             }
-        }
-
-        public static implicit operator Entity(Stateful stateful)
-        {
-            return stateful.entity;
         }
     }
 }

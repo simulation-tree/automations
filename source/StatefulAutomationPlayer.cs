@@ -1,24 +1,21 @@
 ﻿using Automations.Components;
-using System;
 using Unmanaged;
 using Worlds;
 
 namespace Automations
 {
-    public readonly struct StatefulAutomationPlayer : IEntity
+    public readonly partial struct StatefulAutomationPlayer : IEntity
     {
-        private readonly Entity entity;
-
         public readonly StateMachine StateMachine
         {
             get
             {
-                Stateful stateful = entity.As<Stateful>();
+                Stateful stateful = As<Stateful>();
                 return stateful.StateMachine;
             }
             set
             {
-                Stateful stateful = entity.As<Stateful>();
+                Stateful stateful = As<Stateful>();
                 stateful.StateMachine = value;
             }
         }
@@ -27,29 +24,17 @@ namespace Automations
         {
             get
             {
-                Stateful stateful = entity.As<Stateful>();
+                Stateful stateful = As<Stateful>();
                 return stateful.CurrentState;
             }
         }
 
-        readonly uint IEntity.Value => entity.value;
-        readonly World IEntity.World => entity.world;
-
         readonly void IEntity.Describe(ref Archetype archetype)
         {
-            archetype.AddComponentType<IsStateful>();
-            archetype.AddComponentType<IsAutomationPlayer>();
-            archetype.AddArrayElementType<Parameter>();
-            archetype.AddArrayElementType<StateAutomationLink>();
+            archetype.Add<Stateful>();
+            archetype.Add<AutomationPlayer>();
+            archetype.AddArrayType<StateAutomationLink>();
         }
-
-#if NET
-        [Obsolete("Default constructor not available", true)]
-        public StatefulAutomationPlayer()
-        {
-            throw new NotSupportedException();
-        }
-#endif
 
         /// <summary>
         /// Creates a new stateful entity initialized to the
@@ -57,41 +42,34 @@ namespace Automations
         /// </summary>
         public StatefulAutomationPlayer(World world, StateMachine stateMachine)
         {
-            entity = new(world);
-            uint state = stateMachine.AsEntity().GetComponent<IsStateMachine>().entryState;
-            rint stateMachineReference = entity.AddReference(stateMachine);
-            entity.AddComponent(new IsStateful(state, stateMachineReference));
-            entity.AddComponent<IsAutomationPlayer>();
-            entity.CreateArray<Parameter>();
-            entity.CreateArray<StateAutomationLink>();
-        }
-
-        public readonly void Dispose()
-        {
-            entity.Dispose();
+            this.world = world;
+            value = world.CreateEntity(new IsStateful(stateMachine.EntryStateIndex, (rint)1), new IsAutomationPlayer(default, default));
+            AddReference(stateMachine);
+            CreateArray<Parameter>();
+            CreateArray<StateAutomationLink>();
         }
 
         public readonly ref float AddParameter(FixedString name, float defaultValue = 0f)
         {
-            Stateful stateful = entity.As<Stateful>();
+            Stateful stateful = As<Stateful>();
             return ref stateful.AddParameter(name, defaultValue);
         }
 
         public readonly ref float GetParameterRef(FixedString name)
         {
-            Stateful stateful = entity.As<Stateful>();
+            Stateful stateful = As<Stateful>();
             return ref stateful.GetParameterRef(name);
         }
 
         public readonly bool ContainsParameter(FixedString name)
         {
-            Stateful stateful = entity.As<Stateful>();
+            Stateful stateful = As<Stateful>();
             return stateful.ContainsParameter(name);
         }
 
         public readonly void SetParameter(FixedString name, float value)
         {
-            Stateful stateful = entity.As<Stateful>();
+            Stateful stateful = As<Stateful>();
             stateful.SetParameter(name, value);
         }
 
@@ -103,8 +81,8 @@ namespace Automations
         {
             StateMachine.ThrowIfStateIsMissing(stateName);
             int stateNameHash = stateName.GetHashCode();
-            USpan<StateAutomationLink> links = entity.GetArray<StateAutomationLink>();
-            DataType componentType = entity.GetWorld().Schema.GetComponentDataType<T>();
+            USpan<StateAutomationLink> links = GetArray<StateAutomationLink>();
+            DataType componentType = world.Schema.GetComponentDataType<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
             {
@@ -112,32 +90,32 @@ namespace Automations
                 if (existingLink.stateNameHash == stateNameHash)
                 {
                     rint automationReference = existingLink.automationReference;
-                    uint automationEntity = entity.GetReference(automationReference);
+                    uint automationEntity = GetReference(automationReference);
                     existingLink.componentType = componentType;
                     if (automation.GetEntityValue() != automationEntity)
                     {
-                        entity.SetReference(automationReference, automation);
+                        SetReference(automationReference, automation);
                     }
 
                     return;
                 }
             }
 
-            links = entity.ResizeArray<StateAutomationLink>(count + 1);
+            links = ResizeArray<StateAutomationLink>(count + 1);
             ref StateAutomationLink newLink = ref links[count];
             newLink.stateNameHash = stateNameHash;
             newLink.componentType = componentType;
-            newLink.automationReference = entity.AddReference(automation);
-        }
-
-        public static implicit operator Entity(StatefulAutomationPlayer entity)
-        {
-            return entity.entity;
+            newLink.automationReference = AddReference(automation);
         }
 
         public static implicit operator Stateful(StatefulAutomationPlayer entity)
         {
-            return entity.entity.As<Stateful>();
+            return entity.As<Stateful>();
+        }
+
+        public static implicit operator AutomationPlayer(StatefulAutomationPlayer entity)
+        {
+            return entity.As<AutomationPlayer>();
         }
     }
 }
