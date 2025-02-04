@@ -64,7 +64,7 @@ namespace Automations
                 Schema schema = automation.world.Schema;
                 ArrayElementType keyframeType = Automation.GetKeyframeType<T>(schema);
                 ushort keyframeSize = Automation.GetKeyframeSize<T>();
-                ref T value = ref automation.AsEntity().GetArray(keyframeType).Read<T>(index * keyframeSize);
+                ref T value = ref automation.GetArray(keyframeType).Read<T>(index * keyframeSize);
                 ref float time = ref automation.KeyframeTimes[index];
                 return (time, value);
             }
@@ -73,7 +73,7 @@ namespace Automations
                 Schema schema = automation.world.Schema;
                 ArrayElementType keyframeType = Automation.GetKeyframeType<T>(schema);
                 ushort keyframeSize = Automation.GetKeyframeSize<T>();
-                ref T keyframeValue = ref automation.AsEntity().GetArray(keyframeType).Read<T>(index * keyframeSize);
+                ref T keyframeValue = ref automation.GetArray(keyframeType).Read<T>(index * keyframeSize);
                 ref float keyframeTime = ref automation.KeyframeTimes[index];
                 keyframeValue = value.value;
                 keyframeTime = value.time;
@@ -201,13 +201,13 @@ namespace Automations
         public readonly void AddKeyframe(float time, T value)
         {
             DataType keyframeType = Automation.GetKeyframeType<T>(automation.world.Schema);
-            ref IsAutomation component = ref automation.AsEntity().GetComponent<IsAutomation>();
+            ref IsAutomation component = ref automation.GetComponent<IsAutomation>();
             component.keyframeType = keyframeType;
 
             ushort keyframeSize = Automation.GetKeyframeSize<T>();
             uint keyframeCount = Count;
-            Allocation values = automation.AsEntity().ResizeArray(keyframeType, keyframeCount + 1);
-            USpan<KeyframeTime> times = automation.AsEntity().ResizeArray<KeyframeTime>(keyframeCount + 1);
+            Allocation values = automation.ResizeArray(keyframeType, keyframeCount + 1);
+            USpan<KeyframeTime> times = automation.ResizeArray<KeyframeTime>(keyframeCount + 1);
             values.Write(keyframeCount * keyframeSize, value);
             times[keyframeCount] = time;
         }

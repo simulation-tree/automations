@@ -24,7 +24,7 @@ namespace Automations
                 if (component.stateMachineReference == default)
                 {
                     component.stateMachineReference = AddReference(value);
-                    component.state = value.AsEntity().GetComponent<IsStateMachine>().entryState;
+                    component.state = value.GetComponent<IsStateMachine>().entryState;
                 }
                 else
                 {
