@@ -55,6 +55,7 @@ namespace Automations
         public readonly Automation automation;
 
         public readonly uint Count => automation.Count;
+        public readonly bool IsCompliant => automation.IsCompliant;
 
         public unsafe readonly (float time, T value) this[uint index]
         {

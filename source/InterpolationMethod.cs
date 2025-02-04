@@ -9,9 +9,9 @@ namespace Automations
         public static readonly InterpolationMethod Vector3Linear = new(3);
         public static readonly InterpolationMethod Vector4Linear = new(4);
 
-        internal readonly byte value;
+        public readonly byte value;
 
-        internal InterpolationMethod(byte value)
+        public InterpolationMethod(byte value)
         {
             this.value = value;
         }
