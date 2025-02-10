@@ -9,10 +9,11 @@ namespace Automations.Components
         public rint automationReference;
 
         /// <summary>
-        /// The type of component on this entity being automated.
+        /// The type of component or array on this entity being automated.
         /// </summary>
-        public DataType componentType;
+        public DataType dataType;
 
+        public uint arrayIndex;
         public TimeSpan time;
         public bool paused;
 
@@ -24,10 +25,10 @@ namespace Automations.Components
         }
 #endif
 
-        public IsAutomationPlayer(rint automationReference, DataType componentType)
+        public IsAutomationPlayer(rint automationReference, DataType dataType)
         {
             this.automationReference = automationReference;
-            this.componentType = componentType;
+            this.dataType = dataType;
             time = TimeSpan.Zero;
             paused = false;
         }

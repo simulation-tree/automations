@@ -11,29 +11,29 @@ namespace Automations
             this.function = function;
         }
 
-        public readonly void Invoke(void* current, void* next, float progress, void* component, ushort componentTypeSize)
+        public readonly void Invoke(Allocation current, Allocation next, float progress, Allocation target, ushort targetByteSize)
         {
-            Input input = new(progress, current, next, component, componentTypeSize);
+            Input input = new(progress, current, next, target, targetByteSize);
             function(input);
         }
 
-        public readonly void Invoke<T>(ref T current, ref T next, float progress, ref T component) where T : unmanaged
+        public readonly void Invoke<T>(ref T current, ref T next, float progress, ref T target) where T : unmanaged
         {
-            void* currentPointer = System.Runtime.CompilerServices.Unsafe.AsPointer(ref current);
-            void* nextPointer = System.Runtime.CompilerServices.Unsafe.AsPointer(ref next);
-            void* componentPointer = System.Runtime.CompilerServices.Unsafe.AsPointer(ref component);
-            Invoke(currentPointer, nextPointer, progress, componentPointer, (ushort)TypeInfo<T>.size);
+            Allocation currentPointer = Allocation.Get(ref current);
+            Allocation nextPointer = Allocation.Get(ref next);
+            Allocation targetPointer = Allocation.Get(ref target);
+            Invoke(currentPointer, nextPointer, progress, targetPointer, (ushort)sizeof(T));
         }
 
         public readonly struct Input
         {
             public readonly float progress;
-            public readonly void* current;
-            public readonly void* next;
-            public readonly void* component;
+            public readonly Allocation current;
+            public readonly Allocation next;
+            public readonly Allocation component;
             public readonly ushort componentTypeSize;
 
-            public Input(float progress, void* current, void* next, void* component, ushort componentTypeSize)
+            public Input(float progress, Allocation current, Allocation next, Allocation component, ushort componentTypeSize)
             {
                 this.progress = progress;
                 this.current = current;

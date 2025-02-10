@@ -8,7 +8,7 @@ namespace Automations
     {
         public readonly ref bool IsPaused => ref GetComponent<IsAutomationPlayer>().paused;
         public readonly ref TimeSpan Time => ref GetComponent<IsAutomationPlayer>().time;
-        public readonly ref DataType ComponentType => ref GetComponent<IsAutomationPlayer>().componentType;
+        public readonly ref DataType ComponentType => ref GetComponent<IsAutomationPlayer>().dataType;
 
         public readonly Automation CurrentAutomation
         {
@@ -34,11 +34,36 @@ namespace Automations
             archetype.AddComponentType<IsAutomationPlayer>();
         }
 
-        public readonly void SetAutomation<T>(Automation automation) where T : unmanaged
+        /// <summary>
+        /// Assigns the given <paramref name="automation"/> to mutate a component of
+        /// type <typeparamref name="T"/>.
+        /// </summary>
+        public readonly void SetAutomationForComponent<T>(Automation automation) where T : unmanaged
         {
             ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
-            player.componentType = world.Schema.GetComponentDataType<T>();
+            player.dataType = world.Schema.GetComponentDataType<T>();
+            player.arrayIndex = default;
+            if (player.automationReference != default)
+            {
+                SetReference(player.automationReference, automation);
+            }
+            else
+            {
+                player.automationReference = AddReference(automation);
+            }
+        }
+
+        /// <summary>
+        /// Assigns the given <paramref name="automation"/> to mutate a component of
+        /// type <typeparamref name="T"/>.
+        /// </summary>
+        public readonly void SetAutomationForArrayElement<T>(Automation automation, uint index) where T : unmanaged
+        {
+            ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
+            player.time = TimeSpan.Zero;
+            player.dataType = world.Schema.GetArrayElementDataType<T>();
+            player.arrayIndex = index;
             if (player.automationReference != default)
             {
                 SetReference(player.automationReference, automation);
