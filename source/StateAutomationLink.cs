@@ -8,7 +8,8 @@ namespace Automations
     public struct StateAutomationLink
     {
         public int stateNameHash;
-        public DataType componentType;
+        public DataType targetType;
+        public uint arrayIndex;
         public rint automationReference;
 
 #if NET
@@ -19,10 +20,10 @@ namespace Automations
         }
 #endif
 
-        public StateAutomationLink(FixedString stateName, DataType componentType, rint automationReference)
+        public StateAutomationLink(FixedString stateName, DataType targetType, rint automationReference)
         {
             this.stateNameHash = stateName.GetHashCode();
-            this.componentType = componentType;
+            this.targetType = targetType;
             this.automationReference = automationReference;
         }
     }
