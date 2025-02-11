@@ -1,5 +1,7 @@
 ﻿using Automations.Components;
 using System;
+using Types;
+using Unmanaged;
 using Worlds;
 
 namespace Automations
@@ -8,15 +10,14 @@ namespace Automations
     {
         public readonly ref bool IsPaused => ref GetComponent<IsAutomationPlayer>().paused;
         public readonly ref TimeSpan Time => ref GetComponent<IsAutomationPlayer>().time;
-        public readonly ref DataType ComponentType => ref GetComponent<IsAutomationPlayer>().dataType;
 
-        public readonly Automation CurrentAutomation
+        public readonly AutomationEntity CurrentAutomation
         {
             get
             {
                 rint automationReference = GetComponent<IsAutomationPlayer>().automationReference;
                 uint automationEntity = GetReference(automationReference);
-                return new Entity(world, automationEntity).As<Automation>();
+                return new Entity(world, automationEntity).As<AutomationEntity>();
             }
         }
 
@@ -38,12 +39,11 @@ namespace Automations
         /// Assigns the given <paramref name="automation"/> to mutate a component of
         /// type <typeparamref name="T"/>.
         /// </summary>
-        public readonly void SetAutomationForComponent<T>(Automation automation) where T : unmanaged
+        public readonly void SetAutomationForComponent<T>(AutomationEntity automation, uint byteOffset = 0) where T : unmanaged
         {
             ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
-            player.dataType = world.Schema.GetComponentDataType<T>();
-            player.arrayIndex = default;
+            player.target = new(world.Schema.GetComponentDataType<T>(), byteOffset);
             if (player.automationReference != default)
             {
                 SetReference(player.automationReference, automation);
@@ -55,15 +55,38 @@ namespace Automations
         }
 
         /// <summary>
-        /// Assigns the given <paramref name="automation"/> to mutate a component of
+        /// Assigns the given <paramref name="automation"/> to mutate the field with name <paramref name="fieldName"/>
+        /// of a <typeparamref name="T"/> component.
+        /// </summary>
+        public readonly void SetAutomationForComponent<T>(AutomationEntity automation, FixedString fieldName) where T : unmanaged
+        {
+            TypeLayout type = TypeRegistry.Get<T>();
+            uint byteOffset = 0;
+            for (uint i = 0; i < type.Count; i++)
+            {
+                TypeLayout.Variable variable = type[i];
+                if (variable.Name == fieldName)
+                {
+                    SetAutomationForComponent<T>(automation, byteOffset);
+                    return;
+                }
+
+                byteOffset += variable.Size;
+            }
+
+            throw new InvalidOperationException($"Field '{fieldName}' not found on array element '{typeof(T).Name}'");
+        }
+
+        /// <summary>
+        /// Assigns the given <paramref name="automation"/> to mutate an array element of
         /// type <typeparamref name="T"/>.
         /// </summary>
-        public readonly void SetAutomationForArrayElement<T>(Automation automation, uint index) where T : unmanaged
+        public unsafe readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, uint arrayIndex, uint byteOffset = 0) where T : unmanaged
         {
             ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
-            player.dataType = world.Schema.GetArrayElementDataType<T>();
-            player.arrayIndex = index;
+            uint bytePosition = arrayIndex * (uint)sizeof(T) + byteOffset;
+            player.target = new(world.Schema.GetArrayElementDataType<T>(), bytePosition);
             if (player.automationReference != default)
             {
                 SetReference(player.automationReference, automation);
@@ -72,6 +95,29 @@ namespace Automations
             {
                 player.automationReference = AddReference(automation);
             }
+        }
+
+        /// <summary>
+        /// Assigns the given <paramref name="automation"/> to mutate the field with name <paramref name="fieldName"/>
+        /// of a <typeparamref name="T"/> array element at <paramref name="arrayIndex"/>.
+        /// </summary>
+        public readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, uint arrayIndex, FixedString fieldName) where T : unmanaged
+        {
+            TypeLayout type = TypeRegistry.Get<T>();
+            uint byteOffset = 0;
+            for (uint i = 0; i < type.Count; i++)
+            {
+                TypeLayout.Variable variable = type[i];
+                if (variable.Name == fieldName)
+                {
+                    SetAutomationForArrayElement<T>(automation, arrayIndex, byteOffset);
+                    return;
+                }
+
+                byteOffset += variable.Size;
+            }
+
+            throw new InvalidOperationException($"Field '{fieldName}' not found on array element '{typeof(T).Name}'");
         }
 
         public readonly void Pause()

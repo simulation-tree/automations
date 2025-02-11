@@ -5,7 +5,7 @@ using Worlds;
 
 namespace Automations
 {
-    public readonly partial struct Automation : IEntity
+    public readonly partial struct AutomationEntity : IEntity
     {
         public readonly ref bool Loop => ref GetComponent<IsAutomation>().loop;
         public readonly USpan<float> KeyframeTimes => GetArray<KeyframeTime>().As<float>();
@@ -22,9 +22,9 @@ namespace Automations
         /// <summary>
         /// Retrieves the type for the keyframe that can store the given type.
         /// </summary>
-        public static DataType GetKeyframeType<T>(Schema schema) where T : unmanaged
+        public unsafe static DataType GetKeyframeType<T>(Schema schema) where T : unmanaged
         {
-            uint size = TypeInfo<T>.size;
+            uint size = (uint)sizeof(T);
             uint containingSize = Allocations.GetNextPowerOf2(size - 1);
             uint index = Allocations.GetIndexOfPowerOf2(containingSize);
             return index switch
@@ -42,17 +42,17 @@ namespace Automations
             };
         }
 
-        public static ushort GetKeyframeSize<T>() where T : unmanaged
+        public unsafe static ushort GetKeyframeSize<T>() where T : unmanaged
         {
-            uint size = TypeInfo<T>.size;
+            uint size = (uint)sizeof(T);
             uint containingSize = Allocations.GetNextPowerOf2(size - 1);
             return (ushort)containingSize;
         }
     }
 
-    public readonly struct Automation<T> : IEntity where T : unmanaged
+    public readonly struct AutomationEntity<T> : IEntity where T : unmanaged
     {
-        public readonly Automation automation;
+        public readonly AutomationEntity automation;
 
         public readonly uint Count => automation.Count;
         public readonly bool IsCompliant => automation.IsCompliant;
@@ -62,8 +62,8 @@ namespace Automations
             get
             {
                 Schema schema = automation.world.Schema;
-                ArrayElementType keyframeType = Automation.GetKeyframeType<T>(schema);
-                ushort keyframeSize = Automation.GetKeyframeSize<T>();
+                ArrayElementType keyframeType = AutomationEntity.GetKeyframeType<T>(schema);
+                ushort keyframeSize = AutomationEntity.GetKeyframeSize<T>();
                 ref T value = ref automation.GetArray(keyframeType).Read<T>(index * keyframeSize);
                 ref float time = ref automation.KeyframeTimes[index];
                 return (time, value);
@@ -71,8 +71,8 @@ namespace Automations
             set
             {
                 Schema schema = automation.world.Schema;
-                ArrayElementType keyframeType = Automation.GetKeyframeType<T>(schema);
-                ushort keyframeSize = Automation.GetKeyframeSize<T>();
+                ArrayElementType keyframeType = AutomationEntity.GetKeyframeType<T>(schema);
+                ushort keyframeSize = AutomationEntity.GetKeyframeSize<T>();
                 ref T keyframeValue = ref automation.GetArray(keyframeType).Read<T>(index * keyframeSize);
                 ref float keyframeTime = ref automation.KeyframeTimes[index];
                 keyframeValue = value.value;
@@ -86,13 +86,13 @@ namespace Automations
         readonly void IEntity.Describe(ref Archetype archetype)
         {
             archetype.AddComponentType<IsAutomation>();
-            archetype.AddArrayType(Automation.GetKeyframeType<T>(archetype.schema));
+            archetype.AddArrayType(AutomationEntity.GetKeyframeType<T>(archetype.schema));
             archetype.AddArrayType<KeyframeTime>();
         }
 
 #if NET
         [Obsolete("Default constructor not available", true)]
-        public Automation()
+        public AutomationEntity()
         {
             throw new NotSupportedException();
         }
@@ -100,76 +100,76 @@ namespace Automations
         /// <summary>
         /// Creates an automation with no keyframes.
         /// </summary>
-        public Automation(World world, InterpolationMethod interpolationMethod, bool loop = false)
+        public AutomationEntity(World world, InterpolationMethod interpolationMethod, bool loop = false)
         {
-            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = AutomationEntity.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, interpolationMethod, loop));
             world.CreateArray(entity, keyframeType);
             world.CreateArray<KeyframeTime>(entity);
-            automation = new Entity(world, entity).As<Automation>();
+            automation = new Entity(world, entity).As<AutomationEntity>();
         }
 
         /// <summary>
         /// Creates an automation with no keyframes.
         /// </summary>
-        public Automation(World world, bool loop = false)
+        public AutomationEntity(World world, bool loop = false)
         {
-            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = AutomationEntity.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, default, loop));
             world.CreateArray(entity, keyframeType);
             world.CreateArray<KeyframeTime>(entity);
-            automation = new Entity(world, entity).As<Automation>();
+            automation = new Entity(world, entity).As<AutomationEntity>();
         }
 
-        public Automation(World world, InterpolationMethod interpolationMethod, USpan<float> times, USpan<T> values, bool loop = false)
+        public AutomationEntity(World world, InterpolationMethod interpolationMethod, USpan<float> times, USpan<T> values, bool loop = false)
         {
             if (values.Length != times.Length)
             {
-                throw new ArgumentException($"Values and times given to {nameof(Automation)} constructor must be the same length");
+                throw new ArgumentException($"Values and times given to {nameof(AutomationEntity)} constructor must be the same length");
             }
 
-            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = AutomationEntity.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, interpolationMethod, loop));
             Allocation keyframeValues = world.CreateArray(entity, keyframeType, values.Length);
             world.CreateArray(entity, times.As<KeyframeTime>());
-            automation = new Entity(world, entity).As<Automation>();
+            automation = new Entity(world, entity).As<AutomationEntity>();
 
-            ushort keyframeSize = Automation.GetKeyframeSize<T>();
+            ushort keyframeSize = AutomationEntity.GetKeyframeSize<T>();
             for (uint i = 0; i < values.Length; i++)
             {
                 keyframeValues.Write(i * keyframeSize, values[i]);
             }
         }
 
-        public Automation(World world, USpan<float> times, USpan<T> values, bool loop = false)
+        public AutomationEntity(World world, USpan<float> times, USpan<T> values, bool loop = false)
         {
             if (values.Length != times.Length)
             {
-                throw new ArgumentException($"Values and times given to {nameof(Automation)} constructor must be the same length");
+                throw new ArgumentException($"Values and times given to {nameof(AutomationEntity)} constructor must be the same length");
             }
 
-            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = AutomationEntity.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, default, loop));
             Allocation keyframeValues = world.CreateArray(entity, keyframeType, values.Length);
             world.CreateArray(entity, times.As<KeyframeTime>());
-            automation = new Entity(world, entity).As<Automation>();
+            automation = new Entity(world, entity).As<AutomationEntity>();
 
-            ushort keyframeSize = Automation.GetKeyframeSize<T>();
+            ushort keyframeSize = AutomationEntity.GetKeyframeSize<T>();
             for (uint i = 0; i < values.Length; i++)
             {
                 keyframeValues.Write(i * keyframeSize, values[i]);
             }
         }
 
-        public unsafe Automation(World world, InterpolationMethod interpolationMethod, USpan<(float time, T value)> keyframes, bool loop = false)
+        public unsafe AutomationEntity(World world, InterpolationMethod interpolationMethod, USpan<(float time, T value)> keyframes, bool loop = false)
         {
-            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = AutomationEntity.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, interpolationMethod, loop));
             Allocation values = world.CreateArray(entity, keyframeType, keyframes.Length);
             USpan<KeyframeTime> times = world.CreateArray<KeyframeTime>(entity, keyframes.Length);
-            automation = new Entity(world, entity).As<Automation>();
+            automation = new Entity(world, entity).As<AutomationEntity>();
 
-            ushort keyframeSize = Automation.GetKeyframeSize<T>();
+            ushort keyframeSize = AutomationEntity.GetKeyframeSize<T>();
             for (uint i = 0; i < keyframes.Length; i++)
             {
                 times[i] = keyframes[i].time;
@@ -177,15 +177,15 @@ namespace Automations
             }
         }
 
-        public unsafe Automation(World world, USpan<(float time, T value)> keyframes, bool loop = false)
+        public unsafe AutomationEntity(World world, USpan<(float time, T value)> keyframes, bool loop = false)
         {
-            DataType keyframeType = Automation.GetKeyframeType<T>(world.Schema);
+            DataType keyframeType = AutomationEntity.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, default, loop));
             Allocation values = world.CreateArray(entity, keyframeType, keyframes.Length);
             USpan<KeyframeTime> times = world.CreateArray<KeyframeTime>(entity, keyframes.Length);
-            automation = new Entity(world, entity).As<Automation>();
+            automation = new Entity(world, entity).As<AutomationEntity>();
 
-            ushort keyframeSize = Automation.GetKeyframeSize<T>();
+            ushort keyframeSize = AutomationEntity.GetKeyframeSize<T>();
             for (uint i = 0; i < keyframes.Length; i++)
             {
                 times[i] = keyframes[i].time;
@@ -200,11 +200,11 @@ namespace Automations
 
         public readonly void AddKeyframe(float time, T value)
         {
-            DataType keyframeType = Automation.GetKeyframeType<T>(automation.world.Schema);
+            DataType keyframeType = AutomationEntity.GetKeyframeType<T>(automation.world.Schema);
             ref IsAutomation component = ref automation.GetComponent<IsAutomation>();
             component.keyframeType = keyframeType;
 
-            ushort keyframeSize = Automation.GetKeyframeSize<T>();
+            ushort keyframeSize = AutomationEntity.GetKeyframeSize<T>();
             uint keyframeCount = Count;
             Allocation values = automation.ResizeArray(keyframeType, keyframeCount + 1);
             USpan<KeyframeTime> times = automation.ResizeArray<KeyframeTime>(keyframeCount + 1);
@@ -212,12 +212,12 @@ namespace Automations
             times[keyframeCount] = time;
         }
 
-        public static implicit operator Automation(Automation<T> automation)
+        public static implicit operator AutomationEntity(AutomationEntity<T> automation)
         {
             return automation.automation;
         }
 
-        public static implicit operator Entity(Automation<T> automation)
+        public static implicit operator Entity(AutomationEntity<T> automation)
         {
             return automation.automation;
         }

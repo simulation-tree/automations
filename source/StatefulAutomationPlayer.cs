@@ -1,4 +1,6 @@
 ﻿using Automations.Components;
+using System;
+using Types;
 using Unmanaged;
 using Worlds;
 
@@ -77,7 +79,7 @@ namespace Automations
         /// Adds or updates a link between a state and an automation
         /// bound to update component <typeparamref name="T"/>.
         /// </summary>
-        public readonly void AddOrSetLinkToComponent<T>(FixedString stateName, Automation automation) where T : unmanaged
+        public readonly void AddOrSetLinkToComponent<T>(FixedString stateName, AutomationEntity automation, uint byteOffset = 0) where T : unmanaged
         {
             StateMachine.ThrowIfStateIsMissing(stateName);
 
@@ -92,8 +94,7 @@ namespace Automations
                 {
                     rint automationReference = existingLink.automationReference;
                     uint automationEntity = GetReference(automationReference);
-                    existingLink.targetType = targetType;
-                    existingLink.arrayIndex = 0;
+                    existingLink.target = new(targetType, byteOffset);
                     if (automation.GetEntityValue() != automationEntity)
                     {
                         SetReference(automationReference, automation);
@@ -106,20 +107,43 @@ namespace Automations
             links = ResizeArray<StateAutomationLink>(count + 1);
             ref StateAutomationLink newLink = ref links[count];
             newLink.stateNameHash = stateNameHash;
-            newLink.targetType = targetType;
-            newLink.arrayIndex = 0;
+            newLink.target = new(targetType, byteOffset);
             newLink.automationReference = AddReference(automation);
+        }
+
+        /// <summary>
+        /// Adds or updates a link between a state and an automation
+        /// bound to update a specific field on component <typeparamref name="T"/>.
+        /// </summary>
+        public readonly void AddOrSetLinkToComponent<T>(FixedString stateName, AutomationEntity automation, FixedString fieldName) where T : unmanaged
+        {
+            TypeLayout type = TypeRegistry.Get<T>();
+            uint byteOffset = 0;
+            for (uint i = 0; i < type.Count; i++)
+            {
+                TypeLayout.Variable variable = type[i];
+                if (variable.Name == fieldName)
+                {
+                    AddOrSetLinkToComponent<T>(stateName, automation, byteOffset);
+                    return;
+                }
+
+                byteOffset += variable.Size;
+            }
+
+            throw new InvalidOperationException($"Field '{fieldName}' not found on component '{typeof(T).Name}'");
         }
 
         /// <summary>
         /// Adds or updates a link between a state and an automation
         /// bound to update the array element <typeparamref name="T"/> at <paramref name="arrayIndex"/>.
         /// </summary>
-        public readonly void AddOrSetLinkToArrayElement<T>(FixedString stateName, Automation automation, uint arrayIndex) where T : unmanaged
+        public unsafe readonly void AddOrSetLinkToArrayElement<T>(FixedString stateName, AutomationEntity automation, uint arrayIndex, uint byteOffset = 0) where T : unmanaged
         {
             StateMachine.ThrowIfStateIsMissing(stateName);
 
             int stateNameHash = stateName.GetHashCode();
+            uint bytePosition = arrayIndex * (uint)sizeof(T) + byteOffset;
             USpan<StateAutomationLink> links = GetArray<StateAutomationLink>();
             DataType targetType = world.Schema.GetArrayElementDataType<T>();
             uint count = links.Length;
@@ -130,8 +154,7 @@ namespace Automations
                 {
                     rint automationReference = existingLink.automationReference;
                     uint automationEntity = GetReference(automationReference);
-                    existingLink.targetType = targetType;
-                    existingLink.arrayIndex = arrayIndex;
+                    existingLink.target = new(targetType, bytePosition);
                     if (automation.GetEntityValue() != automationEntity)
                     {
                         SetReference(automationReference, automation);
@@ -144,9 +167,32 @@ namespace Automations
             links = ResizeArray<StateAutomationLink>(count + 1);
             ref StateAutomationLink newLink = ref links[count];
             newLink.stateNameHash = stateNameHash;
-            newLink.targetType = targetType;
-            newLink.arrayIndex = arrayIndex;
+            newLink.target = new(targetType, bytePosition);
             newLink.automationReference = AddReference(automation);
+        }
+
+        /// <summary>
+        /// Adds or updates a link between a state and an automation
+        /// bound to update the array element <typeparamref name="T"/> at <paramref name="arrayIndex"/>,
+        /// specifically updating the field <paramref name="fieldName"/>.
+        /// </summary>
+        public readonly void AddOrSetLinkToArrayElement<T>(FixedString stateName, AutomationEntity automation, uint arrayIndex, FixedString fieldName) where T : unmanaged
+        {
+            TypeLayout type = TypeRegistry.Get<T>();
+            uint byteOffset = 0;
+            for (uint i = 0; i < type.Count; i++)
+            {
+                TypeLayout.Variable variable = type[i];
+                if (variable.Name == fieldName)
+                {
+                    AddOrSetLinkToArrayElement<T>(stateName, automation, arrayIndex, byteOffset);
+                    return;
+                }
+
+                byteOffset += variable.Size;
+            }
+
+            throw new InvalidOperationException($"Field '{fieldName}' not found on array element '{typeof(T).Name}'");
         }
 
         public static implicit operator Stateful(StatefulAutomationPlayer entity)

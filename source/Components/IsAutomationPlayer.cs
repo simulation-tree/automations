@@ -7,13 +7,7 @@ namespace Automations.Components
     public struct IsAutomationPlayer
     {
         public rint automationReference;
-
-        /// <summary>
-        /// The type of component or array on this entity being automated.
-        /// </summary>
-        public DataType dataType;
-
-        public uint arrayIndex;
+        public AutomationTarget target;
         public TimeSpan time;
         public bool paused;
 
@@ -25,10 +19,10 @@ namespace Automations.Components
         }
 #endif
 
-        public IsAutomationPlayer(rint automationReference, DataType dataType)
+        public IsAutomationPlayer(rint automationReference, AutomationTarget target)
         {
             this.automationReference = automationReference;
-            this.dataType = dataType;
+            this.target = target;
             time = TimeSpan.Zero;
             paused = false;
         }

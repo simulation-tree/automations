@@ -9,7 +9,7 @@ namespace Automations.Tests
         public void CreateAutomationWithKeyframes()
         {
             using World world = CreateWorld();
-            Automation<Vector3> testAutomation = new(world,
+            AutomationEntity<Vector3> testAutomation = new(world,
             [
                 (0, Vector3.Zero),
                 (1f, Vector3.UnitX),
