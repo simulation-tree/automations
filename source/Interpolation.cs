@@ -30,16 +30,16 @@ namespace Automations
             public readonly float progress;
             public readonly Allocation current;
             public readonly Allocation next;
-            public readonly Allocation component;
-            public readonly ushort componentTypeSize;
+            public readonly Allocation target;
+            public readonly ushort targetByteSize;
 
-            public Input(float progress, Allocation current, Allocation next, Allocation component, ushort componentTypeSize)
+            public Input(float progress, Allocation current, Allocation next, Allocation target, ushort targetByteSize)
             {
                 this.progress = progress;
                 this.current = current;
                 this.next = next;
-                this.component = component;
-                this.componentTypeSize = componentTypeSize;
+                this.target = target;
+                this.targetByteSize = targetByteSize;
             }
 
             public readonly T GetCurrent<T>() where T : unmanaged
@@ -52,9 +52,9 @@ namespace Automations
                 return *(T*)next;
             }
 
-            public readonly void SetComponent<T>(T value) where T : unmanaged
+            public readonly void Set<T>(T value) where T : unmanaged
             {
-                System.Runtime.CompilerServices.Unsafe.CopyBlock(component, &value, componentTypeSize);
+                target.Write(value);
             }
         }
     }
