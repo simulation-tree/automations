@@ -1,9 +1,5 @@
-﻿using System;
-using Worlds;
-
-namespace Automations
+﻿namespace Automations
 {
-    [ArrayElement]
     public struct KeyframeValue8
     {
         public KeyframeValue4 a;

@@ -1,10 +1,8 @@
 ﻿using System;
 using Unmanaged;
-using Worlds;
 
 namespace Automations
 {
-    [ArrayElement]
     public struct AvailableState
     {
         public FixedString name;

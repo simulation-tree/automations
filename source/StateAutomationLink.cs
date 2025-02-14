@@ -4,7 +4,6 @@ using Worlds;
 
 namespace Automations
 {
-    [ArrayElement]
     public struct StateAutomationLink
     {
         public int stateNameHash;

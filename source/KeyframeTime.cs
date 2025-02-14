@@ -1,8 +1,5 @@
-﻿using Worlds;
-
-namespace Automations
+﻿namespace Automations
 {
-    [ArrayElement]
     public struct KeyframeTime
     {
         public float time;

@@ -3,7 +3,6 @@ using Worlds;
 
 namespace Automations.Components
 {
-    [Component]
     public struct IsStateful
     {
         public uint state;

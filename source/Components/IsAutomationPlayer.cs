@@ -3,7 +3,6 @@ using Worlds;
 
 namespace Automations.Components
 {
-    [Component]
     public struct IsAutomationPlayer
     {
         public rint automationReference;
