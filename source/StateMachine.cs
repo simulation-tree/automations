@@ -1,4 +1,5 @@
 ﻿using Automations.Components;
+using Collections.Generic;
 using System;
 using System.Diagnostics;
 using Unmanaged;
@@ -8,8 +9,8 @@ namespace Automations
 {
     public readonly partial struct StateMachine : IEntity
     {
-        public readonly USpan<AvailableState> AvailableStates => GetArray<AvailableState>();
-        public readonly USpan<Transition> Transitions => GetArray<Transition>();
+        public readonly USpan<AvailableState> AvailableStates => GetArray<AvailableState>().AsSpan();
+        public readonly USpan<Transition> Transitions => GetArray<Transition>().AsSpan();
         public readonly uint EntryStateIndex => GetComponent<IsStateMachine>().entryState;
 
         public readonly FixedString EntryState
@@ -77,9 +78,9 @@ namespace Automations
         {
             ThrowIfTransitionAlreadyExists(sourceState, destinationState, parameter);
 
-            USpan<Transition> transitions = Transitions;
+            Array<Transition> transitions = GetArray<Transition>();
             uint transitionCount = transitions.Length;
-            transitions = ResizeArray<Transition>(transitionCount + 1);
+            transitions.Length++;
             transitions[transitionCount] = new(sourceState, destinationState, parameter, condition, value);
         }
 
@@ -123,8 +124,9 @@ namespace Automations
         {
             ThrowIfAvailableStateAlreadyExists(name);
 
-            uint availableStateCount = AvailableStates.Length;
-            USpan<AvailableState> availableStates = ResizeArray<AvailableState>(availableStateCount + 1);
+            Array<AvailableState> availableStates = GetArray<AvailableState>();
+            uint availableStateCount = availableStates.Length;
+            availableStates.Length++;
             availableStates[availableStateCount] = new(name);
         }
 

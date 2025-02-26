@@ -1,4 +1,5 @@
 ﻿using Automations.Components;
+using Collections.Generic;
 using System;
 using System.Diagnostics;
 using Unmanaged;
@@ -8,7 +9,7 @@ namespace Automations
 {
     public readonly partial struct Stateful : IEntity
     {
-        public readonly USpan<Parameter> Parameters => GetArray<Parameter>();
+        public readonly USpan<Parameter> Parameters => GetArray<Parameter>().AsSpan();
 
         public readonly StateMachine StateMachine
         {
@@ -76,8 +77,9 @@ namespace Automations
         {
             ThrowIfParameterAlreadyExists(name);
 
-            uint parameterCount = GetArrayLength<Parameter>();
-            USpan<Parameter> parameters = ResizeArray<Parameter>(parameterCount + 1);
+            Array<Parameter> parameters = GetArray<Parameter>();
+            uint parameterCount = parameters.Length;
+            parameters.Length++;
             ref Parameter newParameter = ref parameters[parameterCount];
             newParameter.name = name;
             newParameter.value = defaultValue;
@@ -120,7 +122,7 @@ namespace Automations
 
         public readonly void AddOrSetParameter(FixedString name, float value)
         {
-            USpan<Parameter> parameters = Parameters;
+            Array<Parameter> parameters = GetArray<Parameter>();
             uint count = parameters.Length;
             for (uint i = 0; i < count; i++)
             {
@@ -131,7 +133,7 @@ namespace Automations
                 }
             }
 
-            parameters = ResizeArray<Parameter>(count + 1);
+            parameters.Length++;
             ref Parameter newParameter = ref parameters[count];
             newParameter.name = name;
             newParameter.value = value;

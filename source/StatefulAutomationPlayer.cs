@@ -1,4 +1,5 @@
 ﻿using Automations.Components;
+using Collections.Generic;
 using System;
 using Types;
 using Unmanaged;
@@ -84,7 +85,7 @@ namespace Automations
             StateMachine.ThrowIfStateIsMissing(stateName);
 
             int stateNameHash = stateName.GetHashCode();
-            USpan<StateAutomationLink> links = GetArray<StateAutomationLink>();
+            Array<StateAutomationLink> links = GetArray<StateAutomationLink>();
             DataType targetType = world.Schema.GetComponentDataType<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
@@ -104,7 +105,7 @@ namespace Automations
                 }
             }
 
-            links = ResizeArray<StateAutomationLink>(count + 1);
+            links.Length++;
             ref StateAutomationLink newLink = ref links[count];
             newLink.stateNameHash = stateNameHash;
             newLink.target = new(targetType, byteOffset);
@@ -144,7 +145,7 @@ namespace Automations
 
             int stateNameHash = stateName.GetHashCode();
             uint bytePosition = arrayIndex * (uint)sizeof(T) + byteOffset;
-            USpan<StateAutomationLink> links = GetArray<StateAutomationLink>();
+            Array<StateAutomationLink> links = GetArray<StateAutomationLink>();
             DataType targetType = world.Schema.GetArrayElementDataType<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
@@ -164,7 +165,7 @@ namespace Automations
                 }
             }
 
-            links = ResizeArray<StateAutomationLink>(count + 1);
+            links.Length++;
             ref StateAutomationLink newLink = ref links[count];
             newLink.stateNameHash = stateNameHash;
             newLink.target = new(targetType, bytePosition);
