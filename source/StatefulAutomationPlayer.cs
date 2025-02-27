@@ -146,7 +146,7 @@ namespace Automations
             int stateNameHash = stateName.GetHashCode();
             uint bytePosition = arrayIndex * (uint)sizeof(T) + byteOffset;
             Array<StateAutomationLink> links = GetArray<StateAutomationLink>();
-            DataType targetType = world.Schema.GetArrayElementDataType<T>();
+            DataType targetType = world.Schema.GetArrayDataType<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
             {

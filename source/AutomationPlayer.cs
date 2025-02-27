@@ -86,7 +86,7 @@ namespace Automations
             ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
             uint bytePosition = arrayIndex * (uint)sizeof(T) + byteOffset;
-            player.target = new(world.Schema.GetArrayElementDataType<T>(), bytePosition);
+            player.target = new(world.Schema.GetArrayDataType<T>(), bytePosition);
             if (player.automationReference != default)
             {
                 SetReference(player.automationReference, automation);
