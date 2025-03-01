@@ -78,7 +78,7 @@ namespace Automations
         {
             ThrowIfTransitionAlreadyExists(sourceState, destinationState, parameter);
 
-            Array<Transition> transitions = GetArray<Transition>();
+            Values<Transition> transitions = GetArray<Transition>();
             uint transitionCount = transitions.Length;
             transitions.Length++;
             transitions[transitionCount] = new(sourceState, destinationState, parameter, condition, value);
@@ -124,7 +124,7 @@ namespace Automations
         {
             ThrowIfAvailableStateAlreadyExists(name);
 
-            Array<AvailableState> availableStates = GetArray<AvailableState>();
+            Values<AvailableState> availableStates = GetArray<AvailableState>();
             uint availableStateCount = availableStates.Length;
             availableStates.Length++;
             availableStates[availableStateCount] = new(name);

@@ -1,5 +1,4 @@
 ﻿using Automations.Components;
-using Collections.Generic;
 using System;
 using System.Diagnostics;
 using Unmanaged;
@@ -77,7 +76,7 @@ namespace Automations
         {
             ThrowIfParameterAlreadyExists(name);
 
-            Array<Parameter> parameters = GetArray<Parameter>();
+            Values<Parameter> parameters = GetArray<Parameter>();
             uint parameterCount = parameters.Length;
             parameters.Length++;
             ref Parameter newParameter = ref parameters[parameterCount];
@@ -122,7 +121,7 @@ namespace Automations
 
         public readonly void AddOrSetParameter(FixedString name, float value)
         {
-            Array<Parameter> parameters = GetArray<Parameter>();
+            Values<Parameter> parameters = GetArray<Parameter>();
             uint count = parameters.Length;
             for (uint i = 0; i < count; i++)
             {

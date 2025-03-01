@@ -1,5 +1,4 @@
 ﻿using Automations.Components;
-using Collections.Generic;
 using System;
 using Types;
 using Unmanaged;
@@ -85,7 +84,7 @@ namespace Automations
             StateMachine.ThrowIfStateIsMissing(stateName);
 
             int stateNameHash = stateName.GetHashCode();
-            Array<StateAutomationLink> links = GetArray<StateAutomationLink>();
+            Values<StateAutomationLink> links = GetArray<StateAutomationLink>();
             DataType targetType = world.Schema.GetComponentDataType<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
@@ -145,7 +144,7 @@ namespace Automations
 
             int stateNameHash = stateName.GetHashCode();
             uint bytePosition = arrayIndex * (uint)sizeof(T) + byteOffset;
-            Array<StateAutomationLink> links = GetArray<StateAutomationLink>();
+            Values<StateAutomationLink> links = GetArray<StateAutomationLink>();
             DataType targetType = world.Schema.GetArrayDataType<T>();
             uint count = links.Length;
             for (uint i = 0; i < count; i++)
