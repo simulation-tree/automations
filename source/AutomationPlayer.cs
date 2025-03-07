@@ -58,14 +58,15 @@ namespace Automations
         /// Assigns the given <paramref name="automation"/> to mutate the field with name <paramref name="fieldName"/>
         /// of a <typeparamref name="T"/> component.
         /// </summary>
-        public readonly void SetAutomationForComponent<T>(AutomationEntity automation, FixedString fieldName) where T : unmanaged
+        public readonly void SetAutomationForComponent<T>(AutomationEntity automation, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
             uint byteOffset = 0;
+            long fieldNameHash = fieldName.GetLongHashCode();
             for (uint i = 0; i < type.Count; i++)
             {
                 TypeLayout.Variable variable = type[i];
-                if (variable.Name == fieldName)
+                if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
                     SetAutomationForComponent<T>(automation, byteOffset);
                     return;
@@ -101,14 +102,15 @@ namespace Automations
         /// Assigns the given <paramref name="automation"/> to mutate the field with name <paramref name="fieldName"/>
         /// of a <typeparamref name="T"/> array element at <paramref name="arrayIndex"/>.
         /// </summary>
-        public readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, uint arrayIndex, FixedString fieldName) where T : unmanaged
+        public readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, uint arrayIndex, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
             uint byteOffset = 0;
+            long fieldNameHash = fieldName.GetLongHashCode();
             for (uint i = 0; i < type.Count; i++)
             {
                 TypeLayout.Variable variable = type[i];
-                if (variable.Name == fieldName)
+                if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
                     SetAutomationForArrayElement<T>(automation, arrayIndex, byteOffset);
                     return;

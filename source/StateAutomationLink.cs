@@ -18,7 +18,7 @@ namespace Automations
         }
 #endif
 
-        public StateAutomationLink(FixedString stateName, AutomationTarget target, rint automationReference)
+        public StateAutomationLink(ASCIIText256 stateName, AutomationTarget target, rint automationReference)
         {
             this.stateNameHash = stateName.GetHashCode();
             this.target = target;

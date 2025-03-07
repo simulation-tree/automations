@@ -22,7 +22,7 @@ namespace Automations
             }
         }
 
-        public readonly FixedString CurrentState
+        public readonly ASCIIText256 CurrentState
         {
             get
             {
@@ -51,25 +51,25 @@ namespace Automations
             CreateArray<StateAutomationLink>();
         }
 
-        public readonly ref float AddParameter(FixedString name, float defaultValue = 0f)
+        public readonly ref float AddParameter(ASCIIText256 name, float defaultValue = 0f)
         {
             Stateful stateful = As<Stateful>();
             return ref stateful.AddParameter(name, defaultValue);
         }
 
-        public readonly ref float GetParameterRef(FixedString name)
+        public readonly ref float GetParameterRef(ASCIIText256 name)
         {
             Stateful stateful = As<Stateful>();
             return ref stateful.GetParameterRef(name);
         }
 
-        public readonly bool ContainsParameter(FixedString name)
+        public readonly bool ContainsParameter(ASCIIText256 name)
         {
             Stateful stateful = As<Stateful>();
             return stateful.ContainsParameter(name);
         }
 
-        public readonly void SetParameter(FixedString name, float value)
+        public readonly void SetParameter(ASCIIText256 name, float value)
         {
             Stateful stateful = As<Stateful>();
             stateful.SetParameter(name, value);
@@ -79,7 +79,7 @@ namespace Automations
         /// Adds or updates a link between a state and an automation
         /// bound to update component <typeparamref name="T"/>.
         /// </summary>
-        public readonly void AddOrSetLinkToComponent<T>(FixedString stateName, AutomationEntity automation, uint byteOffset = 0) where T : unmanaged
+        public readonly void AddOrSetLinkToComponent<T>(ASCIIText256 stateName, AutomationEntity automation, uint byteOffset = 0) where T : unmanaged
         {
             StateMachine.ThrowIfStateIsMissing(stateName);
 
@@ -115,14 +115,15 @@ namespace Automations
         /// Adds or updates a link between a state and an automation
         /// bound to update a specific field on component <typeparamref name="T"/>.
         /// </summary>
-        public readonly void AddOrSetLinkToComponent<T>(FixedString stateName, AutomationEntity automation, FixedString fieldName) where T : unmanaged
+        public readonly void AddOrSetLinkToComponent<T>(ASCIIText256 stateName, AutomationEntity automation, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
             uint byteOffset = 0;
+            long fieldNameHash = fieldName.GetLongHashCode();
             for (uint i = 0; i < type.Count; i++)
             {
                 TypeLayout.Variable variable = type[i];
-                if (variable.Name == fieldName)
+                if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
                     AddOrSetLinkToComponent<T>(stateName, automation, byteOffset);
                     return;
@@ -138,7 +139,7 @@ namespace Automations
         /// Adds or updates a link between a state and an automation
         /// bound to update the array element <typeparamref name="T"/> at <paramref name="arrayIndex"/>.
         /// </summary>
-        public unsafe readonly void AddOrSetLinkToArrayElement<T>(FixedString stateName, AutomationEntity automation, uint arrayIndex, uint byteOffset = 0) where T : unmanaged
+        public unsafe readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, uint arrayIndex, uint byteOffset = 0) where T : unmanaged
         {
             StateMachine.ThrowIfStateIsMissing(stateName);
 
@@ -176,14 +177,15 @@ namespace Automations
         /// bound to update the array element <typeparamref name="T"/> at <paramref name="arrayIndex"/>,
         /// specifically updating the field <paramref name="fieldName"/>.
         /// </summary>
-        public readonly void AddOrSetLinkToArrayElement<T>(FixedString stateName, AutomationEntity automation, uint arrayIndex, FixedString fieldName) where T : unmanaged
+        public readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, uint arrayIndex, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
             uint byteOffset = 0;
+            long fieldNameHash = fieldName.GetLongHashCode();
             for (uint i = 0; i < type.Count; i++)
             {
                 TypeLayout.Variable variable = type[i];
-                if (variable.Name == fieldName)
+                if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
                     AddOrSetLinkToArrayElement<T>(stateName, automation, arrayIndex, byteOffset);
                     return;

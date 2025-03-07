@@ -19,7 +19,7 @@ namespace Automations
         }
 #endif
 
-        public Transition(FixedString sourceState, FixedString destinationState, FixedString parameter, Condition condition, float value)
+        public Transition(ASCIIText256 sourceState, ASCIIText256 destinationState, ASCIIText256 parameter, Condition condition, float value)
         {
             this.sourceStateHash = sourceState.GetHashCode();
             this.destinationStateHash = destinationState.GetHashCode();

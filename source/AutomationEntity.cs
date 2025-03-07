@@ -25,8 +25,8 @@ namespace Automations
         public unsafe static DataType GetKeyframeType<T>(Schema schema) where T : unmanaged
         {
             uint size = (uint)sizeof(T);
-            uint containingSize = Allocations.GetNextPowerOf2(size - 1);
-            uint index = Allocations.GetIndexOfPowerOf2(containingSize);
+            uint containingSize = (size - 1).GetNextPowerOf2();
+            uint index = containingSize.GetIndexOfPowerOf2();
             return index switch
             {
                 0 => new(schema.GetArrayType<KeyframeValue1>(), 1),
@@ -45,7 +45,7 @@ namespace Automations
         public unsafe static ushort GetKeyframeSize<T>() where T : unmanaged
         {
             uint size = (uint)sizeof(T);
-            uint containingSize = Allocations.GetNextPowerOf2(size - 1);
+            uint containingSize = (size - 1).GetNextPowerOf2();
             return (ushort)containingSize;
         }
     }

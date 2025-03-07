@@ -5,7 +5,7 @@ namespace Automations
 {
     public struct Parameter
     {
-        public FixedString name;
+        public ASCIIText256 name;
         public float value;
 
 #if NET
@@ -16,7 +16,7 @@ namespace Automations
         }
 #endif
 
-        public Parameter(FixedString name, float value)
+        public Parameter(ASCIIText256 name, float value)
         {
             this.name = name;
             this.value = value;

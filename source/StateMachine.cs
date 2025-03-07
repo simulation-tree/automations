@@ -1,5 +1,4 @@
 ﻿using Automations.Components;
-using Collections.Generic;
 using System;
 using System.Diagnostics;
 using Unmanaged;
@@ -13,7 +12,7 @@ namespace Automations
         public readonly USpan<Transition> Transitions => GetArray<Transition>().AsSpan();
         public readonly uint EntryStateIndex => GetComponent<IsStateMachine>().entryState;
 
-        public readonly FixedString EntryState
+        public readonly ASCIIText256 EntryState
         {
             get
             {
@@ -74,7 +73,7 @@ namespace Automations
             CreateArray(transitions);
         }
 
-        public readonly void AddTransition(FixedString sourceState, FixedString destinationState, FixedString parameter, Transition.Condition condition, float value)
+        public readonly void AddTransition(ASCIIText256 sourceState, ASCIIText256 destinationState, ASCIIText256 parameter, Transition.Condition condition, float value)
         {
             ThrowIfTransitionAlreadyExists(sourceState, destinationState, parameter);
 
@@ -84,7 +83,7 @@ namespace Automations
             transitions[transitionCount] = new(sourceState, destinationState, parameter, condition, value);
         }
 
-        public readonly bool ContainsTransition(FixedString sourceState, FixedString destinationState, FixedString parameter)
+        public readonly bool ContainsTransition(ASCIIText256 sourceState, ASCIIText256 destinationState, ASCIIText256 parameter)
         {
             USpan<Transition> transitions = Transitions;
             int sourceStateHash = sourceState.GetHashCode();
@@ -102,7 +101,7 @@ namespace Automations
             return false;
         }
 
-        public readonly ref Transition GetTransition(FixedString sourceState, FixedString destinationState, FixedString parameter)
+        public readonly ref Transition GetTransition(ASCIIText256 sourceState, ASCIIText256 destinationState, ASCIIText256 parameter)
         {
             USpan<Transition> transitions = Transitions;
             int sourceStateHash = sourceState.GetHashCode();
@@ -120,7 +119,7 @@ namespace Automations
             throw new NullReferenceException($"Transition from `{sourceState}` to `{destinationState}` with parameter `{parameter}` not found");
         }
 
-        public readonly void AddState(FixedString name)
+        public readonly void AddState(ASCIIText256 name)
         {
             ThrowIfAvailableStateAlreadyExists(name);
 
@@ -130,7 +129,7 @@ namespace Automations
             availableStates[availableStateCount] = new(name);
         }
 
-        public readonly bool ContainsState(FixedString name)
+        public readonly bool ContainsState(ASCIIText256 name)
         {
             USpan<AvailableState> availableStates = AvailableStates;
             for (uint i = 0; i < availableStates.Length; i++)
@@ -144,7 +143,7 @@ namespace Automations
             return false;
         }
 
-        public readonly ref AvailableState GetState(FixedString name)
+        public readonly ref AvailableState GetState(ASCIIText256 name)
         {
             USpan<AvailableState> availableStates = AvailableStates;
             for (uint i = 0; i < availableStates.Length; i++)
@@ -159,7 +158,7 @@ namespace Automations
         }
 
         [Conditional("DEBUG")]
-        private readonly void ThrowIfTransitionAlreadyExists(FixedString sourceState, FixedString destinationState, FixedString parameter)
+        private readonly void ThrowIfTransitionAlreadyExists(ASCIIText256 sourceState, ASCIIText256 destinationState, ASCIIText256 parameter)
         {
             if (ContainsTransition(sourceState, destinationState, parameter))
             {
@@ -168,7 +167,7 @@ namespace Automations
         }
 
         [Conditional("DEBUG")]
-        private readonly void ThrowIfAvailableStateAlreadyExists(FixedString name)
+        private readonly void ThrowIfAvailableStateAlreadyExists(ASCIIText256 name)
         {
             if (ContainsState(name))
             {
@@ -177,7 +176,7 @@ namespace Automations
         }
 
         [Conditional("DEBUG")]
-        public readonly void ThrowIfStateIsMissing(FixedString name)
+        public readonly void ThrowIfStateIsMissing(ASCIIText256 name)
         {
             if (!ContainsState(name))
             {

@@ -11,7 +11,7 @@ namespace Automations
             this.function = function;
         }
 
-        public readonly void Invoke(Allocation current, Allocation next, float progress, Allocation target, ushort targetByteSize)
+        public readonly void Invoke(MemoryAddress current, MemoryAddress next, float progress, MemoryAddress target, ushort targetByteSize)
         {
             Input input = new(progress, current, next, target, targetByteSize);
             function(input);
@@ -19,21 +19,21 @@ namespace Automations
 
         public readonly void Invoke<T>(ref T current, ref T next, float progress, ref T target) where T : unmanaged
         {
-            Allocation currentPointer = Allocation.Get(ref current);
-            Allocation nextPointer = Allocation.Get(ref next);
-            Allocation targetPointer = Allocation.Get(ref target);
+            MemoryAddress currentPointer = MemoryAddress.Get(ref current);
+            MemoryAddress nextPointer = MemoryAddress.Get(ref next);
+            MemoryAddress targetPointer = MemoryAddress.Get(ref target);
             Invoke(currentPointer, nextPointer, progress, targetPointer, (ushort)sizeof(T));
         }
 
         public readonly struct Input
         {
             public readonly float progress;
-            public readonly Allocation current;
-            public readonly Allocation next;
-            public readonly Allocation target;
+            public readonly MemoryAddress current;
+            public readonly MemoryAddress next;
+            public readonly MemoryAddress target;
             public readonly ushort targetByteSize;
 
-            public Input(float progress, Allocation current, Allocation next, Allocation target, ushort targetByteSize)
+            public Input(float progress, MemoryAddress current, MemoryAddress next, MemoryAddress target, ushort targetByteSize)
             {
                 this.progress = progress;
                 this.current = current;

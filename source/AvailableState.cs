@@ -5,7 +5,7 @@ namespace Automations
 {
     public struct AvailableState
     {
-        public FixedString name;
+        public ASCIIText256 name;
 
 #if NET
         [Obsolete("Default constructor not available", true)]
@@ -15,7 +15,7 @@ namespace Automations
         }
 #endif
 
-        public AvailableState(FixedString name)
+        public AvailableState(ASCIIText256 name)
         {
             this.name = name;
         }

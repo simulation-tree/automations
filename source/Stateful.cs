@@ -42,7 +42,7 @@ namespace Automations
             }
         }
 
-        public readonly FixedString CurrentState
+        public readonly ASCIIText256 CurrentState
         {
             get
             {
@@ -72,7 +72,7 @@ namespace Automations
             archetype.AddArrayType<Parameter>();
         }
 
-        public readonly ref float AddParameter(FixedString name, float defaultValue = 0f)
+        public readonly ref float AddParameter(ASCIIText256 name, float defaultValue = 0f)
         {
             ThrowIfParameterAlreadyExists(name);
 
@@ -85,7 +85,7 @@ namespace Automations
             return ref newParameter.value;
         }
 
-        public readonly bool ContainsParameter(FixedString name)
+        public readonly bool ContainsParameter(ASCIIText256 name)
         {
             USpan<Parameter> parameters = Parameters;
             for (uint i = 0; i < parameters.Length; i++)
@@ -99,7 +99,7 @@ namespace Automations
             return false;
         }
 
-        public readonly ref float GetParameterRef(FixedString name)
+        public readonly ref float GetParameterRef(ASCIIText256 name)
         {
             USpan<Parameter> parameters = Parameters;
             for (uint i = 0; i < parameters.Length; i++)
@@ -113,13 +113,13 @@ namespace Automations
             throw new NullReferenceException($"Parameter `{name}` not found");
         }
 
-        public readonly void SetParameter(FixedString name, float value)
+        public readonly void SetParameter(ASCIIText256 name, float value)
         {
             ref float parameter = ref GetParameterRef(name);
             parameter = value;
         }
 
-        public readonly void AddOrSetParameter(FixedString name, float value)
+        public readonly void AddOrSetParameter(ASCIIText256 name, float value)
         {
             Values<Parameter> parameters = GetArray<Parameter>();
             uint count = parameters.Length;
@@ -139,7 +139,7 @@ namespace Automations
         }
 
         [Conditional("DEBUG")]
-        private readonly void ThrowIfParameterAlreadyExists(FixedString name)
+        private readonly void ThrowIfParameterAlreadyExists(ASCIIText256 name)
         {
             if (ContainsParameter(name))
             {
