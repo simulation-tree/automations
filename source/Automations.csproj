@@ -10,8 +10,8 @@
         <WarningLevel>8</WarningLevel>
         <Title>Automations</Title>
         <Authors>popcron</Authors>
-        <Company>game-simulations</Company>
-        <RepositoryUrl>https://github.com/game-simulations/automations</RepositoryUrl>
+        <Company>simulation-tree</Company>
+        <RepositoryUrl>https://github.com/simulation-tree/automations</RepositoryUrl>
         <PackageId/>
     </PropertyGroup>
 
