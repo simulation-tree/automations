@@ -8,9 +8,9 @@ namespace Automations
 {
     public readonly partial struct StateMachine : IEntity
     {
-        public readonly USpan<AvailableState> AvailableStates => GetArray<AvailableState>().AsSpan();
-        public readonly USpan<Transition> Transitions => GetArray<Transition>().AsSpan();
-        public readonly uint EntryStateIndex => GetComponent<IsStateMachine>().entryState;
+        public readonly ReadOnlySpan<AvailableState> AvailableStates => GetArray<AvailableState>().AsSpan();
+        public readonly ReadOnlySpan<Transition> Transitions => GetArray<Transition>().AsSpan();
+        public readonly int EntryStateIndex => GetComponent<IsStateMachine>().entryState;
 
         public readonly ASCIIText256 EntryState
         {
@@ -28,8 +28,8 @@ namespace Automations
                 ThrowIfStateIsMissing(value);
 
                 ref IsStateMachine stateMachine = ref GetComponent<IsStateMachine>();
-                USpan<AvailableState> states = AvailableStates;
-                for (uint index = 0; index < states.Length; index++)
+                ReadOnlySpan<AvailableState> states = AvailableStates;
+                for (int index = 0; index < states.Length; index++)
                 {
                     if (states[index].name == value)
                     {
@@ -65,7 +65,7 @@ namespace Automations
         /// <para>The first available will be set as the
         /// entry state.</para>
         /// </summary>
-        public StateMachine(World world, USpan<AvailableState> states, USpan<Transition> transitions, uint entryState = 1)
+        public StateMachine(World world, ReadOnlySpan<AvailableState> states, ReadOnlySpan<Transition> transitions, int entryState = 1)
         {
             this.world = world;
             value = world.CreateEntity(new IsStateMachine(entryState));
@@ -78,18 +78,18 @@ namespace Automations
             ThrowIfTransitionAlreadyExists(sourceState, destinationState, parameter);
 
             Values<Transition> transitions = GetArray<Transition>();
-            uint transitionCount = transitions.Length;
+            int transitionCount = transitions.Length;
             transitions.Length++;
             transitions[transitionCount] = new(sourceState, destinationState, parameter, condition, value);
         }
 
         public readonly bool ContainsTransition(ASCIIText256 sourceState, ASCIIText256 destinationState, ASCIIText256 parameter)
         {
-            USpan<Transition> transitions = Transitions;
+            Values<Transition> transitions = GetArray<Transition>();
             int sourceStateHash = sourceState.GetHashCode();
             int destinationStateHash = destinationState.GetHashCode();
             int parameterHash = parameter.GetHashCode();
-            for (uint i = 0; i < transitions.Length; i++)
+            for (int i = 0; i < transitions.Length; i++)
             {
                 ref Transition transition = ref transitions[i];
                 if (transition.sourceStateHash == sourceStateHash && transition.destinationStateHash == destinationStateHash && transition.parameterHash == parameterHash)
@@ -103,11 +103,11 @@ namespace Automations
 
         public readonly ref Transition GetTransition(ASCIIText256 sourceState, ASCIIText256 destinationState, ASCIIText256 parameter)
         {
-            USpan<Transition> transitions = Transitions;
+            Values<Transition> transitions = GetArray<Transition>();
             int sourceStateHash = sourceState.GetHashCode();
             int destinationStateHash = destinationState.GetHashCode();
             int parameterHash = parameter.GetHashCode();
-            for (uint i = 0; i < transitions.Length; i++)
+            for (int i = 0; i < transitions.Length; i++)
             {
                 ref Transition transition = ref transitions[i];
                 if (transition.sourceStateHash == sourceStateHash && transition.destinationStateHash == destinationStateHash && transition.parameterHash == parameterHash)
@@ -124,15 +124,15 @@ namespace Automations
             ThrowIfAvailableStateAlreadyExists(name);
 
             Values<AvailableState> availableStates = GetArray<AvailableState>();
-            uint availableStateCount = availableStates.Length;
+            int availableStateCount = availableStates.Length;
             availableStates.Length++;
             availableStates[availableStateCount] = new(name);
         }
 
         public readonly bool ContainsState(ASCIIText256 name)
         {
-            USpan<AvailableState> availableStates = AvailableStates;
-            for (uint i = 0; i < availableStates.Length; i++)
+            ReadOnlySpan<AvailableState> availableStates = AvailableStates;
+            for (int i = 0; i < availableStates.Length; i++)
             {
                 if (availableStates[i].name == name)
                 {
@@ -145,8 +145,8 @@ namespace Automations
 
         public readonly ref AvailableState GetState(ASCIIText256 name)
         {
-            USpan<AvailableState> availableStates = AvailableStates;
-            for (uint i = 0; i < availableStates.Length; i++)
+            Values<AvailableState> availableStates = GetArray<AvailableState>();
+            for (int i = 0; i < availableStates.Length; i++)
             {
                 if (availableStates[i].name == name)
                 {

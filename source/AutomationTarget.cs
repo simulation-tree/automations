@@ -5,9 +5,9 @@ namespace Automations
     public readonly struct AutomationTarget
     {
         public readonly DataType targetType;
-        public readonly uint bytePosition;
+        public readonly int bytePosition;
 
-        public AutomationTarget(DataType targetType, uint bytePosition)
+        public AutomationTarget(DataType targetType, int bytePosition)
         {
             this.targetType = targetType;
             this.bytePosition = bytePosition;

@@ -79,15 +79,15 @@ namespace Automations
         /// Adds or updates a link between a state and an automation
         /// bound to update component <typeparamref name="T"/>.
         /// </summary>
-        public readonly void AddOrSetLinkToComponent<T>(ASCIIText256 stateName, AutomationEntity automation, uint byteOffset = 0) where T : unmanaged
+        public readonly void AddOrSetLinkToComponent<T>(ASCIIText256 stateName, AutomationEntity automation, int byteOffset = 0) where T : unmanaged
         {
             StateMachine.ThrowIfStateIsMissing(stateName);
 
             int stateNameHash = stateName.GetHashCode();
             Values<StateAutomationLink> links = GetArray<StateAutomationLink>();
             DataType targetType = world.Schema.GetComponentDataType<T>();
-            uint count = links.Length;
-            for (uint i = 0; i < count; i++)
+            int count = links.Length;
+            for (int i = 0; i < count; i++)
             {
                 ref StateAutomationLink existingLink = ref links[i];
                 if (existingLink.stateNameHash == stateNameHash)
@@ -118,7 +118,7 @@ namespace Automations
         public readonly void AddOrSetLinkToComponent<T>(ASCIIText256 stateName, AutomationEntity automation, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
-            uint byteOffset = 0;
+            int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
             for (uint i = 0; i < type.Count; i++)
             {
@@ -139,16 +139,16 @@ namespace Automations
         /// Adds or updates a link between a state and an automation
         /// bound to update the array element <typeparamref name="T"/> at <paramref name="arrayIndex"/>.
         /// </summary>
-        public unsafe readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, uint arrayIndex, uint byteOffset = 0) where T : unmanaged
+        public unsafe readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, int arrayIndex, int byteOffset = 0) where T : unmanaged
         {
             StateMachine.ThrowIfStateIsMissing(stateName);
 
             int stateNameHash = stateName.GetHashCode();
-            uint bytePosition = arrayIndex * (uint)sizeof(T) + byteOffset;
+            int bytePosition = arrayIndex * sizeof(T) + byteOffset;
             Values<StateAutomationLink> links = GetArray<StateAutomationLink>();
             DataType targetType = world.Schema.GetArrayDataType<T>();
-            uint count = links.Length;
-            for (uint i = 0; i < count; i++)
+            int count = links.Length;
+            for (int i = 0; i < count; i++)
             {
                 ref StateAutomationLink existingLink = ref links[i];
                 if (existingLink.stateNameHash == stateNameHash)
@@ -177,10 +177,10 @@ namespace Automations
         /// bound to update the array element <typeparamref name="T"/> at <paramref name="arrayIndex"/>,
         /// specifically updating the field <paramref name="fieldName"/>.
         /// </summary>
-        public readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, uint arrayIndex, ASCIIText256 fieldName) where T : unmanaged
+        public readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, int arrayIndex, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
-            uint byteOffset = 0;
+            int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
             for (uint i = 0; i < type.Count; i++)
             {

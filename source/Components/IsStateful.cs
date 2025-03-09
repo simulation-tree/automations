@@ -5,7 +5,7 @@ namespace Automations.Components
 {
     public struct IsStateful
     {
-        public uint state;
+        public int state;
         public rint stateMachineReference;
 
 #if NET
@@ -16,7 +16,7 @@ namespace Automations.Components
         }
 #endif
 
-        public IsStateful(uint state, rint stateMachineReference)
+        public IsStateful(int state, rint stateMachineReference)
         {
             this.state = state;
             this.stateMachineReference = stateMachineReference;

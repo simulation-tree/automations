@@ -8,7 +8,7 @@ namespace Automations
 {
     public readonly partial struct Stateful : IEntity
     {
-        public readonly USpan<Parameter> Parameters => GetArray<Parameter>().AsSpan();
+        public readonly System.Span<Parameter> Parameters => GetArray<Parameter>().AsSpan();
 
         public readonly StateMachine StateMachine
         {
@@ -77,7 +77,7 @@ namespace Automations
             ThrowIfParameterAlreadyExists(name);
 
             Values<Parameter> parameters = GetArray<Parameter>();
-            uint parameterCount = parameters.Length;
+            int parameterCount = parameters.Length;
             parameters.Length++;
             ref Parameter newParameter = ref parameters[parameterCount];
             newParameter.name = name;
@@ -87,8 +87,8 @@ namespace Automations
 
         public readonly bool ContainsParameter(ASCIIText256 name)
         {
-            USpan<Parameter> parameters = Parameters;
-            for (uint i = 0; i < parameters.Length; i++)
+            Span<Parameter> parameters = Parameters;
+            for (int i = 0; i < parameters.Length; i++)
             {
                 if (parameters[i].name == name)
                 {
@@ -101,8 +101,8 @@ namespace Automations
 
         public readonly ref float GetParameterRef(ASCIIText256 name)
         {
-            USpan<Parameter> parameters = Parameters;
-            for (uint i = 0; i < parameters.Length; i++)
+            Span<Parameter> parameters = Parameters;
+            for (int i = 0; i < parameters.Length; i++)
             {
                 if (parameters[i].name == name)
                 {
@@ -122,8 +122,8 @@ namespace Automations
         public readonly void AddOrSetParameter(ASCIIText256 name, float value)
         {
             Values<Parameter> parameters = GetArray<Parameter>();
-            uint count = parameters.Length;
-            for (uint i = 0; i < count; i++)
+            int count = parameters.Length;
+            for (int i = 0; i < count; i++)
             {
                 if (parameters[i].name == name)
                 {

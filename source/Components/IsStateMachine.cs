@@ -4,7 +4,7 @@ namespace Automations.Components
 {
     public struct IsStateMachine
     {
-        public uint entryState;
+        public int entryState;
 
 #if NET
         [Obsolete("Default constructor not available", true)]
@@ -14,7 +14,7 @@ namespace Automations.Components
         }
 #endif
 
-        public IsStateMachine(uint entryState)
+        public IsStateMachine(int entryState)
         {
             this.entryState = entryState;
         }

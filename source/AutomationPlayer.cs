@@ -39,7 +39,7 @@ namespace Automations
         /// Assigns the given <paramref name="automation"/> to mutate a component of
         /// type <typeparamref name="T"/>.
         /// </summary>
-        public readonly void SetAutomationForComponent<T>(AutomationEntity automation, uint byteOffset = 0) where T : unmanaged
+        public readonly void SetAutomationForComponent<T>(AutomationEntity automation, int byteOffset = 0) where T : unmanaged
         {
             ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
@@ -61,7 +61,7 @@ namespace Automations
         public readonly void SetAutomationForComponent<T>(AutomationEntity automation, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
-            uint byteOffset = 0;
+            int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
             for (uint i = 0; i < type.Count; i++)
             {
@@ -82,11 +82,11 @@ namespace Automations
         /// Assigns the given <paramref name="automation"/> to mutate an array element of
         /// type <typeparamref name="T"/>.
         /// </summary>
-        public unsafe readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, uint arrayIndex, uint byteOffset = 0) where T : unmanaged
+        public unsafe readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, int arrayIndex, int byteOffset = 0) where T : unmanaged
         {
             ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
-            uint bytePosition = arrayIndex * (uint)sizeof(T) + byteOffset;
+            int bytePosition = arrayIndex * sizeof(T) + byteOffset;
             player.target = new(world.Schema.GetArrayDataType<T>(), bytePosition);
             if (player.automationReference != default)
             {
@@ -102,10 +102,10 @@ namespace Automations
         /// Assigns the given <paramref name="automation"/> to mutate the field with name <paramref name="fieldName"/>
         /// of a <typeparamref name="T"/> array element at <paramref name="arrayIndex"/>.
         /// </summary>
-        public readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, uint arrayIndex, ASCIIText256 fieldName) where T : unmanaged
+        public readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, int arrayIndex, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
-            uint byteOffset = 0;
+            int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
             for (uint i = 0; i < type.Count; i++)
             {
