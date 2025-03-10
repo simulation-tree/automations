@@ -8,7 +8,7 @@ namespace Automations
 {
     public readonly partial struct Stateful : IEntity
     {
-        public readonly System.Span<Parameter> Parameters => GetArray<Parameter>().AsSpan();
+        public readonly ReadOnlySpan<Parameter> Parameters => GetArray<Parameter>().AsSpan();
 
         public readonly StateMachine StateMachine
         {
@@ -87,7 +87,7 @@ namespace Automations
 
         public readonly bool ContainsParameter(ASCIIText256 name)
         {
-            Span<Parameter> parameters = Parameters;
+            ReadOnlySpan<Parameter> parameters = Parameters;
             for (int i = 0; i < parameters.Length; i++)
             {
                 if (parameters[i].name == name)
@@ -101,7 +101,7 @@ namespace Automations
 
         public readonly ref float GetParameterRef(ASCIIText256 name)
         {
-            Span<Parameter> parameters = Parameters;
+            Values<Parameter> parameters = GetArray<Parameter>();
             for (int i = 0; i < parameters.Length; i++)
             {
                 if (parameters[i].name == name)

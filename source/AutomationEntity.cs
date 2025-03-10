@@ -8,7 +8,7 @@ namespace Automations
     public readonly partial struct AutomationEntity : IEntity
     {
         public readonly ref bool Loop => ref GetComponent<IsAutomation>().loop;
-        public readonly System.Span<float> KeyframeTimes => GetArray<KeyframeTime>().AsSpan<float>();
+        public readonly ReadOnlySpan<float> KeyframeTimes => GetArray<KeyframeTime>().AsSpan<float>();
         public readonly Values KeyframeValues => GetArray(KeyframeType);
         public readonly ArrayElementType KeyframeType => GetComponent<IsAutomation>().keyframeType.ArrayType;
         public readonly int Count => GetArrayLength<KeyframeTime>();
@@ -65,7 +65,7 @@ namespace Automations
                 ArrayElementType keyframeType = AutomationEntity.GetKeyframeType<T>(schema).ArrayType;
                 ushort keyframeSize = AutomationEntity.GetKeyframeSize<T>();
                 ref T value = ref automation.GetArray(keyframeType).Read<T>(index * keyframeSize);
-                ref float time = ref automation.KeyframeTimes[index];
+                ref float time = ref automation.GetArrayElement<KeyframeTime>(index).time;
                 return (time, value);
             }
             set
@@ -74,7 +74,7 @@ namespace Automations
                 ArrayElementType keyframeType = AutomationEntity.GetKeyframeType<T>(schema).ArrayType;
                 ushort keyframeSize = AutomationEntity.GetKeyframeSize<T>();
                 ref T keyframeValue = ref automation.GetArray(keyframeType).Read<T>(index * keyframeSize);
-                ref float keyframeTime = ref automation.KeyframeTimes[index];
+                ref float keyframeTime = ref automation.GetArrayElement<KeyframeTime>(index).time;
                 keyframeValue = value.value;
                 keyframeTime = value.time;
             }
