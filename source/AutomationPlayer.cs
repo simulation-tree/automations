@@ -75,7 +75,7 @@ namespace Automations
                 byteOffset += variable.Size;
             }
 
-            throw new InvalidOperationException($"Field '{fieldName}' not found on array element '{typeof(T).Name}'");
+            throw new InvalidOperationException($"Field `{fieldName}` not found in `{typeof(T).Name}`");
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Automations
                 byteOffset += variable.Size;
             }
 
-            throw new InvalidOperationException($"Field '{fieldName}' not found on array element '{typeof(T).Name}'");
+            throw new InvalidOperationException($"Field `{fieldName}` not found on in `{typeof(T).Name}`");
         }
 
         public readonly void Pause()

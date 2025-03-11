@@ -10,7 +10,7 @@ namespace Automations
         public readonly ref bool Loop => ref GetComponent<IsAutomation>().loop;
         public readonly ReadOnlySpan<float> KeyframeTimes => GetArray<KeyframeTime>().AsSpan<float>();
         public readonly Values KeyframeValues => GetArray(KeyframeType);
-        public readonly ArrayElementType KeyframeType => GetComponent<IsAutomation>().keyframeType.ArrayType;
+        public readonly ArrayType KeyframeType => GetComponent<IsAutomation>().keyframeType.ArrayType;
         public readonly int Count => GetArrayLength<KeyframeTime>();
 
         readonly void IEntity.Describe(ref Archetype archetype)
@@ -54,7 +54,7 @@ namespace Automations
             get
             {
                 Schema schema = automation.world.Schema;
-                ArrayElementType keyframeType = AutomationEntity.GetKeyframeType<T>(schema).ArrayType;
+                ArrayType keyframeType = AutomationEntity.GetKeyframeType<T>(schema).ArrayType;
                 ref T value = ref automation.GetArray(keyframeType).Get<T>(index);
                 ref float time = ref automation.GetArrayElement<KeyframeTime>(index).time;
                 return (time, value);
@@ -62,7 +62,7 @@ namespace Automations
             set
             {
                 Schema schema = automation.world.Schema;
-                ArrayElementType keyframeType = AutomationEntity.GetKeyframeType<T>(schema).ArrayType;
+                ArrayType keyframeType = AutomationEntity.GetKeyframeType<T>(schema).ArrayType;
                 ref T keyframeValue = ref automation.GetArray(keyframeType).Get<T>(index);
                 ref float keyframeTime = ref automation.GetArrayElement<KeyframeTime>(index).time;
                 keyframeValue = value.value;
@@ -71,7 +71,7 @@ namespace Automations
         }
 
         public readonly ref bool Loop => ref automation.Loop;
-        public readonly ArrayElementType KeyframeType => automation.KeyframeType;
+        public readonly ArrayType KeyframeType => automation.KeyframeType;
 
         readonly void IEntity.Describe(ref Archetype archetype)
         {

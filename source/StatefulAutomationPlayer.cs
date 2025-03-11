@@ -192,7 +192,7 @@ namespace Automations
                 byteOffset += variable.Size;
             }
 
-            throw new InvalidOperationException($"Field '{fieldName}' not found on array element '{typeof(T).Name}'");
+            throw new InvalidOperationException($"Field `{fieldName}` not found in `{typeof(T).Name}`");
         }
 
         public static implicit operator Stateful(StatefulAutomationPlayer entity)
