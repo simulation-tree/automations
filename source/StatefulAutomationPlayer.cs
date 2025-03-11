@@ -104,8 +104,7 @@ namespace Automations
                 }
             }
 
-            links.Length++;
-            ref StateAutomationLink newLink = ref links[count];
+            ref StateAutomationLink newLink = ref links.Add();
             newLink.stateNameHash = stateNameHash;
             newLink.target = new(targetType, byteOffset);
             newLink.automationReference = AddReference(automation);
@@ -165,8 +164,7 @@ namespace Automations
                 }
             }
 
-            links.Length++;
-            ref StateAutomationLink newLink = ref links[count];
+            ref StateAutomationLink newLink = ref links.Add();
             newLink.stateNameHash = stateNameHash;
             newLink.target = new(targetType, bytePosition);
             newLink.automationReference = AddReference(automation);

@@ -78,9 +78,7 @@ namespace Automations
             ThrowIfTransitionAlreadyExists(sourceState, destinationState, parameter);
 
             Values<Transition> transitions = GetArray<Transition>();
-            int transitionCount = transitions.Length;
-            transitions.Length++;
-            transitions[transitionCount] = new(sourceState, destinationState, parameter, condition, value);
+            transitions.Add(new(sourceState, destinationState, parameter, condition, value));
         }
 
         public readonly bool ContainsTransition(ASCIIText256 sourceState, ASCIIText256 destinationState, ASCIIText256 parameter)
@@ -124,9 +122,7 @@ namespace Automations
             ThrowIfAvailableStateAlreadyExists(name);
 
             Values<AvailableState> availableStates = GetArray<AvailableState>();
-            int availableStateCount = availableStates.Length;
-            availableStates.Length++;
-            availableStates[availableStateCount] = new(name);
+            availableStates.Add(new(name));
         }
 
         public readonly bool ContainsState(ASCIIText256 name)

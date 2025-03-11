@@ -77,9 +77,7 @@ namespace Automations
             ThrowIfParameterAlreadyExists(name);
 
             Values<Parameter> parameters = GetArray<Parameter>();
-            int parameterCount = parameters.Length;
-            parameters.Length++;
-            ref Parameter newParameter = ref parameters[parameterCount];
+            ref Parameter newParameter = ref parameters.Add();
             newParameter.name = name;
             newParameter.value = defaultValue;
             return ref newParameter.value;
@@ -132,8 +130,7 @@ namespace Automations
                 }
             }
 
-            parameters.Length++;
-            ref Parameter newParameter = ref parameters[count];
+            ref Parameter newParameter = ref parameters.Add();
             newParameter.name = name;
             newParameter.value = value;
         }
