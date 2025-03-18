@@ -119,7 +119,7 @@ namespace Automations
             TypeLayout type = TypeRegistry.Get<T>();
             int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
-            for (uint i = 0; i < type.Count; i++)
+            for (int i = 0; i < type.variableCount; i++)
             {
                 TypeLayout.Variable variable = type[i];
                 if (variable.Name.GetLongHashCode() == fieldNameHash)
@@ -180,7 +180,7 @@ namespace Automations
             TypeLayout type = TypeRegistry.Get<T>();
             int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
-            for (int i = 0; i < type.Count; i++)
+            for (int i = 0; i < type.variableCount; i++)
             {
                 TypeLayout.Variable variable = type[i];
                 if (variable.Name.GetLongHashCode() == fieldNameHash)
