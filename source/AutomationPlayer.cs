@@ -82,11 +82,11 @@ namespace Automations
         /// Assigns the given <paramref name="automation"/> to mutate an array element of
         /// type <typeparamref name="T"/>.
         /// </summary>
-        public unsafe readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, int arrayIndex, int byteOffset = 0) where T : unmanaged
+        public unsafe readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, int index, int byteOffset = 0) where T : unmanaged
         {
             ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
             player.time = TimeSpan.Zero;
-            int bytePosition = arrayIndex * sizeof(T) + byteOffset;
+            int bytePosition = index * sizeof(T) + byteOffset;
             player.target = new(world.Schema.GetArrayDataType<T>(), bytePosition);
             if (player.automationReference != default)
             {
@@ -100,9 +100,9 @@ namespace Automations
 
         /// <summary>
         /// Assigns the given <paramref name="automation"/> to mutate the field with name <paramref name="fieldName"/>
-        /// of a <typeparamref name="T"/> array element at <paramref name="arrayIndex"/>.
+        /// of a <typeparamref name="T"/> array element at <paramref name="index"/>.
         /// </summary>
-        public readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, int arrayIndex, ASCIIText256 fieldName) where T : unmanaged
+        public readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, int index, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
             int byteOffset = 0;
@@ -112,7 +112,7 @@ namespace Automations
                 TypeLayout.Variable variable = type[i];
                 if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
-                    SetAutomationForArrayElement<T>(automation, arrayIndex, byteOffset);
+                    SetAutomationForArrayElement<T>(automation, index, byteOffset);
                     return;
                 }
 

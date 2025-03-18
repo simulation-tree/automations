@@ -136,14 +136,14 @@ namespace Automations
 
         /// <summary>
         /// Adds or updates a link between a state and an automation
-        /// bound to update the array element <typeparamref name="T"/> at <paramref name="arrayIndex"/>.
+        /// bound to update the array element <typeparamref name="T"/> at <paramref name="index"/>.
         /// </summary>
-        public unsafe readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, int arrayIndex, int byteOffset = 0) where T : unmanaged
+        public unsafe readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, int index, int byteOffset = 0) where T : unmanaged
         {
             StateMachine.ThrowIfStateIsMissing(stateName);
 
             int stateNameHash = stateName.GetHashCode();
-            int bytePosition = arrayIndex * sizeof(T) + byteOffset;
+            int bytePosition = index * sizeof(T) + byteOffset;
             Values<StateAutomationLink> links = GetArray<StateAutomationLink>();
             DataType targetType = world.Schema.GetArrayDataType<T>();
             int count = links.Length;
@@ -172,20 +172,20 @@ namespace Automations
 
         /// <summary>
         /// Adds or updates a link between a state and an automation
-        /// bound to update the array element <typeparamref name="T"/> at <paramref name="arrayIndex"/>,
+        /// bound to update the array element <typeparamref name="T"/> at <paramref name="index"/>,
         /// specifically updating the field <paramref name="fieldName"/>.
         /// </summary>
-        public readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, int arrayIndex, ASCIIText256 fieldName) where T : unmanaged
+        public readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, int index, ASCIIText256 fieldName) where T : unmanaged
         {
             TypeLayout type = TypeRegistry.Get<T>();
             int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
-            for (uint i = 0; i < type.Count; i++)
+            for (int i = 0; i < type.Count; i++)
             {
                 TypeLayout.Variable variable = type[i];
                 if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
-                    AddOrSetLinkToArrayElement<T>(stateName, automation, arrayIndex, byteOffset);
+                    AddOrSetLinkToArrayElement<T>(stateName, automation, index, byteOffset);
                     return;
                 }
 

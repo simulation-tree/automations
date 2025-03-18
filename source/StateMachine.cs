@@ -20,8 +20,7 @@ namespace Automations
                 ThrowIfEntryStateIsUnassigned();
 
                 ref IsStateMachine stateMachine = ref GetComponent<IsStateMachine>();
-                AvailableState state = AvailableStates[stateMachine.entryState - 1];
-                return state.name;
+                return GetArrayElement<AvailableState>(stateMachine.entryState - 1).name;
             }
             set
             {
@@ -29,11 +28,11 @@ namespace Automations
 
                 ref IsStateMachine stateMachine = ref GetComponent<IsStateMachine>();
                 ReadOnlySpan<AvailableState> states = AvailableStates;
-                for (int index = 0; index < states.Length; index++)
+                for (int i = 0; i < states.Length; i++)
                 {
-                    if (states[index].name == value)
+                    if (states[i].name == value)
                     {
-                        stateMachine.entryState = index + 1;
+                        stateMachine.entryState = i + 1;
                         return;
                     }
                 }

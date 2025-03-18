@@ -49,8 +49,7 @@ namespace Automations
                 ThrowIfStateIsUnassigned();
 
                 ref IsStateful isStateful = ref GetComponent<IsStateful>();
-                AvailableState state = StateMachine.AvailableStates[isStateful.state - 1];
-                return state.name;
+                return StateMachine.GetArrayElement<AvailableState>(isStateful.state - 1).name;
             }
         }
 

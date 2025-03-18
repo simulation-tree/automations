@@ -9,8 +9,8 @@ namespace Automations
     {
         public readonly ref bool Loop => ref GetComponent<IsAutomation>().loop;
         public readonly ReadOnlySpan<float> KeyframeTimes => GetArray<KeyframeTime>().AsSpan<float>();
-        public readonly Values KeyframeValues => GetArray(KeyframeType);
-        public readonly ArrayType KeyframeType => GetComponent<IsAutomation>().keyframeType.ArrayType;
+        public readonly Values KeyframeValues => GetArray(KeyframeType.index);
+        public readonly DataType KeyframeType => GetComponent<IsAutomation>().keyframeType;
         public readonly int Count => GetArrayLength<KeyframeTime>();
 
         readonly void IEntity.Describe(ref Archetype archetype)
@@ -28,15 +28,15 @@ namespace Automations
             int index = containingSize.GetIndexOfPowerOf2();
             return index switch
             {
-                0 => new(schema.GetArrayType<KeyframeValue1>(), 1),
-                1 => new(schema.GetArrayType<KeyframeValue2>(), 2),
-                2 => new(schema.GetArrayType<KeyframeValue4>(), 4),
-                3 => new(schema.GetArrayType<KeyframeValue8>(), 8),
-                4 => new(schema.GetArrayType<KeyframeValue16>(), 16),
-                5 => new(schema.GetArrayType<KeyframeValue32>(), 32),
-                6 => new(schema.GetArrayType<KeyframeValue64>(), 64),
-                7 => new(schema.GetArrayType<KeyframeValue128>(), 128),
-                8 => new(schema.GetArrayType<KeyframeValue256>(), 256),
+                0 => new(schema.GetArrayType<KeyframeValue1>(), DataType.Kind.Array, 1),
+                1 => new(schema.GetArrayType<KeyframeValue2>(), DataType.Kind.Array, 2),
+                2 => new(schema.GetArrayType<KeyframeValue4>(), DataType.Kind.Array, 4),
+                3 => new(schema.GetArrayType<KeyframeValue8>(), DataType.Kind.Array, 8),
+                4 => new(schema.GetArrayType<KeyframeValue16>(), DataType.Kind.Array, 16),
+                5 => new(schema.GetArrayType<KeyframeValue32>(), DataType.Kind.Array, 32),
+                6 => new(schema.GetArrayType<KeyframeValue64>(), DataType.Kind.Array, 64),
+                7 => new(schema.GetArrayType<KeyframeValue128>(), DataType.Kind.Array, 128),
+                8 => new(schema.GetArrayType<KeyframeValue256>(), DataType.Kind.Array, 256),
                 _ => throw new NotSupportedException($"Keyframe value type `{typeof(T)}` is greater than the maximum 256")
             };
         }
@@ -54,16 +54,16 @@ namespace Automations
             get
             {
                 Schema schema = automation.world.Schema;
-                ArrayType keyframeType = AutomationEntity.GetKeyframeType<T>(schema).ArrayType;
-                ref T value = ref automation.GetArray(keyframeType).Get<T>(index);
+                DataType keyframeType = AutomationEntity.GetKeyframeType<T>(schema);
+                ref T value = ref automation.GetArray(keyframeType.index).Get<T>(index);
                 ref float time = ref automation.GetArrayElement<KeyframeTime>(index).time;
                 return (time, value);
             }
             set
             {
                 Schema schema = automation.world.Schema;
-                ArrayType keyframeType = AutomationEntity.GetKeyframeType<T>(schema).ArrayType;
-                ref T keyframeValue = ref automation.GetArray(keyframeType).Get<T>(index);
+                DataType keyframeType = AutomationEntity.GetKeyframeType<T>(schema);
+                ref T keyframeValue = ref automation.GetArray(keyframeType.index).Get<T>(index);
                 ref float keyframeTime = ref automation.GetArrayElement<KeyframeTime>(index).time;
                 keyframeValue = value.value;
                 keyframeTime = value.time;
@@ -71,12 +71,12 @@ namespace Automations
         }
 
         public readonly ref bool Loop => ref automation.Loop;
-        public readonly ArrayType KeyframeType => automation.KeyframeType;
+        public readonly DataType KeyframeType => automation.KeyframeType;
 
         readonly void IEntity.Describe(ref Archetype archetype)
         {
             archetype.AddComponentType<IsAutomation>();
-            archetype.AddArrayType(AutomationEntity.GetKeyframeType<T>(archetype.schema).ArrayType);
+            archetype.AddArrayType(AutomationEntity.GetKeyframeType<T>(archetype.schema).index);
             archetype.AddArrayType<KeyframeTime>();
         }
 
@@ -94,7 +94,7 @@ namespace Automations
         {
             DataType keyframeType = AutomationEntity.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, interpolationMethod, loop));
-            world.CreateArray(entity, keyframeType.ArrayType);
+            world.CreateArray(entity, keyframeType);
             world.CreateArray<KeyframeTime>(entity);
             automation = new Entity(world, entity).As<AutomationEntity>();
         }
@@ -106,7 +106,7 @@ namespace Automations
         {
             DataType keyframeType = AutomationEntity.GetKeyframeType<T>(world.Schema);
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, default, loop));
-            world.CreateArray(entity, keyframeType.ArrayType);
+            world.CreateArray(entity, keyframeType);
             world.CreateArray<KeyframeTime>(entity);
             automation = new Entity(world, entity).As<AutomationEntity>();
         }
@@ -190,13 +190,10 @@ namespace Automations
             ref IsAutomation component = ref automation.GetComponent<IsAutomation>();
             component.keyframeType = keyframeType;
 
-            Values values = automation.GetArray(keyframeType.ArrayType);
-            int keyframeCount = values.Length;
-            values.Length++;
+            Values values = automation.GetArray(keyframeType.index);
             Values times = automation.GetArray<KeyframeTime>();
-            times.Length++;
-            values.Set(keyframeCount, value);
-            times.Set(keyframeCount, time);
+            values.Add(value);
+            times.Add(time);
         }
 
         public static implicit operator AutomationEntity(AutomationEntity<T> automation)
