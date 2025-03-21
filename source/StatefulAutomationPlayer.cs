@@ -116,12 +116,13 @@ namespace Automations
         /// </summary>
         public readonly void AddOrSetLinkToComponent<T>(ASCIIText256 stateName, AutomationEntity automation, ASCIIText256 fieldName) where T : unmanaged
         {
-            TypeLayout type = TypeRegistry.Get<T>();
+            Types.Type type = TypeRegistry.GetType<T>();
             int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
-            for (int i = 0; i < type.variableCount; i++)
+            ReadOnlySpan<Field> variables = type.Fields;
+            for (int i = 0; i < variables.Length; i++)
             {
-                TypeLayout.Variable variable = type[i];
+                Field variable = variables[i];
                 if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
                     AddOrSetLinkToComponent<T>(stateName, automation, byteOffset);
@@ -177,12 +178,13 @@ namespace Automations
         /// </summary>
         public readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, int index, ASCIIText256 fieldName) where T : unmanaged
         {
-            TypeLayout type = TypeRegistry.Get<T>();
+            Types.Type type = TypeRegistry.GetType<T>();
             int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
-            for (int i = 0; i < type.variableCount; i++)
+            ReadOnlySpan<Field> variables = type.Fields;
+            for (int i = 0; i < variables.Length; i++)
             {
-                TypeLayout.Variable variable = type[i];
+                Field variable = variables[i];
                 if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
                     AddOrSetLinkToArrayElement<T>(stateName, automation, index, byteOffset);

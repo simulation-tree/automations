@@ -60,12 +60,13 @@ namespace Automations
         /// </summary>
         public readonly void SetAutomationForComponent<T>(AutomationEntity automation, ASCIIText256 fieldName) where T : unmanaged
         {
-            TypeLayout type = TypeRegistry.Get<T>();
+            Types.Type type = TypeRegistry.GetType<T>();
             int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
-            for (int i = 0; i < type.variableCount; i++)
+            ReadOnlySpan<Field> variables = type.Fields;
+            for (int i = 0; i < variables.Length; i++)
             {
-                TypeLayout.Variable variable = type[i];
+                Field variable = variables[i];
                 if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
                     SetAutomationForComponent<T>(automation, byteOffset);
@@ -104,12 +105,13 @@ namespace Automations
         /// </summary>
         public readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, int index, ASCIIText256 fieldName) where T : unmanaged
         {
-            TypeLayout type = TypeRegistry.Get<T>();
+            Types.Type type = TypeRegistry.GetType<T>();
             int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
-            for (int i = 0; i < type.variableCount; i++)
+            ReadOnlySpan<Field> variables = type.Fields;
+            for (int i = 0; i < variables.Length; i++)
             {
-                TypeLayout.Variable variable = type[i];
+                Field variable = variables[i];
                 if (variable.Name.GetLongHashCode() == fieldNameHash)
                 {
                     SetAutomationForArrayElement<T>(automation, index, byteOffset);

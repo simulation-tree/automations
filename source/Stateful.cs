@@ -8,7 +8,7 @@ namespace Automations
 {
     public readonly partial struct Stateful : IEntity
     {
-        public readonly ReadOnlySpan<Parameter> Parameters => GetArray<Parameter>().AsSpan();
+        public readonly ReadOnlySpan<Parameter> Parameters => GetArray<Parameter>();
 
         public readonly StateMachine StateMachine
         {

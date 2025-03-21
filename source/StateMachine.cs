@@ -8,8 +8,8 @@ namespace Automations
 {
     public readonly partial struct StateMachine : IEntity
     {
-        public readonly ReadOnlySpan<AvailableState> AvailableStates => GetArray<AvailableState>().AsSpan();
-        public readonly ReadOnlySpan<Transition> Transitions => GetArray<Transition>().AsSpan();
+        public readonly ReadOnlySpan<AvailableState> AvailableStates => GetArray<AvailableState>();
+        public readonly ReadOnlySpan<Transition> Transitions => GetArray<Transition>();
         public readonly int EntryStateIndex => GetComponent<IsStateMachine>().entryState;
 
         public readonly ASCIIText256 EntryState
