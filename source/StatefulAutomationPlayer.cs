@@ -116,7 +116,7 @@ namespace Automations
         /// </summary>
         public readonly void AddOrSetLinkToComponent<T>(ASCIIText256 stateName, AutomationEntity automation, ASCIIText256 fieldName) where T : unmanaged
         {
-            Types.Type type = MetadataRegistry.GetType<T>();
+            TypeMetadata type = MetadataRegistry.GetType<T>();
             int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
             ReadOnlySpan<Field> variables = type.Fields;
@@ -178,7 +178,7 @@ namespace Automations
         /// </summary>
         public readonly void AddOrSetLinkToArrayElement<T>(ASCIIText256 stateName, AutomationEntity automation, int index, ASCIIText256 fieldName) where T : unmanaged
         {
-            Types.Type type = MetadataRegistry.GetType<T>();
+            TypeMetadata type = MetadataRegistry.GetType<T>();
             int byteOffset = 0;
             long fieldNameHash = fieldName.GetLongHashCode();
             ReadOnlySpan<Field> variables = type.Fields;
