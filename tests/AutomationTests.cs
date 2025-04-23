@@ -8,7 +8,7 @@ namespace Automations.Tests
     {
         static AutomationTests()
         {
-            MetadataRegistry.Load<AutomationsTypeBank>();
+            MetadataRegistry.Load<AutomationsMetadataBank>();
         }
 
         protected override Schema CreateSchema()
