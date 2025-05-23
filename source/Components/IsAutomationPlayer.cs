@@ -7,7 +7,7 @@ namespace Automations.Components
     {
         public rint automationReference;
         public AutomationTarget target;
-        public TimeSpan time;
+        public double time;
         public bool paused;
 
 #if NET
@@ -22,7 +22,7 @@ namespace Automations.Components
         {
             this.automationReference = automationReference;
             this.target = target;
-            time = TimeSpan.Zero;
+            time = 0;
             paused = false;
         }
     }

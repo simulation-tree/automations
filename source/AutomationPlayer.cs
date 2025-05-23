@@ -9,7 +9,7 @@ namespace Automations
     public readonly partial struct AutomationPlayer : IEntity
     {
         public readonly ref bool IsPaused => ref GetComponent<IsAutomationPlayer>().paused;
-        public readonly ref TimeSpan Time => ref GetComponent<IsAutomationPlayer>().time;
+        public readonly ref double Time => ref GetComponent<IsAutomationPlayer>().time;
 
         public readonly AutomationEntity CurrentAutomation
         {
@@ -42,7 +42,7 @@ namespace Automations
         public readonly void SetAutomationForComponent<T>(AutomationEntity automation, int byteOffset = 0) where T : unmanaged
         {
             ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
-            player.time = TimeSpan.Zero;
+            player.time = 0;
             player.target = new(world.Schema.GetComponentDataType<T>(), byteOffset);
             if (player.automationReference != default)
             {
@@ -86,7 +86,7 @@ namespace Automations
         public unsafe readonly void SetAutomationForArrayElement<T>(AutomationEntity automation, int index, int byteOffset = 0) where T : unmanaged
         {
             ref IsAutomationPlayer player = ref GetComponent<IsAutomationPlayer>();
-            player.time = TimeSpan.Zero;
+            player.time = 0;
             int bytePosition = index * sizeof(T) + byteOffset;
             player.target = new(world.Schema.GetArrayDataType<T>(), bytePosition);
             if (player.automationReference != default)
