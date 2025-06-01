@@ -5,7 +5,8 @@ namespace Automations
 {
     public static class BuiltInInterpolations
     {
-        public unsafe static readonly Interpolation[] all = [
+        public unsafe static readonly Interpolation[] all =
+        [
             new(&FloatLinear),
             new(&Vector2Linear),
             new(&Vector3Linear),
@@ -17,8 +18,7 @@ namespace Automations
         {
             float current = input.GetCurrent<float>();
             float next = input.GetNext<float>();
-            float result = current + (next - current) * input.progress;
-            input.Set(result);
+            input.Set(float.Lerp(current, next, input.progress));
         }
 
         [UnmanagedCallersOnly]
@@ -26,8 +26,7 @@ namespace Automations
         {
             Vector2 current = input.GetCurrent<Vector2>();
             Vector2 next = input.GetNext<Vector2>();
-            Vector2 result = Vector2.Lerp(current, next, input.progress);
-            input.Set(result);
+            input.Set(Vector2.Lerp(current, next, input.progress));
         }
 
         [UnmanagedCallersOnly]
@@ -35,8 +34,7 @@ namespace Automations
         {
             Vector3 current = input.GetCurrent<Vector3>();
             Vector3 next = input.GetNext<Vector3>();
-            Vector3 result = Vector3.Lerp(current, next, input.progress);
-            input.Set(result);
+            input.Set(Vector3.Lerp(current, next, input.progress));
         }
 
         [UnmanagedCallersOnly]
@@ -44,8 +42,7 @@ namespace Automations
         {
             Vector4 current = input.GetCurrent<Vector4>();
             Vector4 next = input.GetNext<Vector4>();
-            Vector4 result = Vector4.Lerp(current, next, input.progress);
-            input.Set(result);
+            input.Set(Vector4.Lerp(current, next, input.progress));
         }
     }
 }
