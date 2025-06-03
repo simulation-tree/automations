@@ -96,7 +96,7 @@ namespace Automations
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, interpolationMethod, loop));
             world.CreateArray(entity, keyframeType);
             world.CreateArray<KeyframeTime>(entity);
-            automation = new Entity(world, entity).As<AutomationEntity>();
+            automation = Entity.Get<AutomationEntity>(world, entity);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Automations
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, default, loop));
             world.CreateArray(entity, keyframeType);
             world.CreateArray<KeyframeTime>(entity);
-            automation = new Entity(world, entity).As<AutomationEntity>();
+            automation = Entity.Get<AutomationEntity>(world, entity);
         }
 
         public AutomationEntity(World world, InterpolationMethod interpolationMethod, ReadOnlySpan<float> times, ReadOnlySpan<T> values, bool loop = false)
@@ -122,7 +122,7 @@ namespace Automations
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, interpolationMethod, loop));
             Values keyframeValues = world.CreateArray(entity, keyframeType, values.Length);
             world.CreateArray(entity, times.As<float, KeyframeTime>());
-            automation = new Entity(world, entity).As<AutomationEntity>();
+            automation = Entity.Get<AutomationEntity>(world, entity);
 
             for (int i = 0; i < values.Length; i++)
             {
@@ -141,7 +141,7 @@ namespace Automations
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, default, loop));
             Values keyframeValues = world.CreateArray(entity, keyframeType, values.Length);
             world.CreateArray(entity, times.As<float, KeyframeTime>());
-            automation = new Entity(world, entity).As<AutomationEntity>();
+            automation = Entity.Get<AutomationEntity>(world, entity);
 
             for (int i = 0; i < values.Length; i++)
             {
@@ -155,7 +155,7 @@ namespace Automations
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, interpolationMethod, loop));
             Values values = world.CreateArray(entity, keyframeType, keyframes.Length);
             Values<KeyframeTime> times = world.CreateArray<KeyframeTime>(entity, keyframes.Length);
-            automation = new Entity(world, entity).As<AutomationEntity>();
+            automation = Entity.Get<AutomationEntity>(world, entity);
 
             for (int i = 0; i < keyframes.Length; i++)
             {
@@ -170,7 +170,7 @@ namespace Automations
             uint entity = world.CreateEntity(new IsAutomation(keyframeType, default, loop));
             Values values = world.CreateArray(entity, keyframeType, keyframes.Length);
             Values<KeyframeTime> times = world.CreateArray<KeyframeTime>(entity, keyframes.Length);
-            automation = new Entity(world, entity).As<AutomationEntity>();
+            automation = Entity.Get<AutomationEntity>(world, entity);
 
             for (int i = 0; i < keyframes.Length; i++)
             {

@@ -17,7 +17,7 @@ namespace Automations
             {
                 rint automationReference = GetComponent<IsAutomationPlayer>().automationReference;
                 uint automationEntity = GetReference(automationReference);
-                return new Entity(world, automationEntity).As<AutomationEntity>();
+                return Entity.Get<AutomationEntity>(world, automationEntity);
             }
         }
 
