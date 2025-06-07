@@ -30,9 +30,9 @@
 
   <ItemGroup>
     <Content Include="bin/Debug/net9.0/Automations.dll" Pack="true" PackagePath="tools/debug/Automations.dll" Visible="false"/>
-    <Content Include="bin/Debug/net9.0/Automations.xml" Pack="true" PackagePath="tools/debug/Automations.xml" Visible="false"/>
+    <Content Include="bin/Debug/net9.0/Automations.xml" Pack="true" PackagePath="tools/debug/Automations.xml" Visible="false" Condition="Exists('bin/Debug/net9.0/Automations.xml')"/>
     <Content Include="bin/Release/net9.0/Automations.dll" Pack="true" PackagePath="tools/release/Automations.dll" Visible="false"/>
-    <Content Include="bin/Release/net9.0/Automations.xml" Pack="true" PackagePath="tools/release/Automations.xml" Visible="false"/>
+    <Content Include="bin/Release/net9.0/Automations.xml" Pack="true" PackagePath="tools/release/Automations.xml" Visible="false" Condition="Exists('bin/Release/net9.0/Automations.xml')"/>
     <Content Include="build/Automations.targets" Pack="true" PackagePath="build/Automations.targets" Visible="false"/>
   </ItemGroup>
 
